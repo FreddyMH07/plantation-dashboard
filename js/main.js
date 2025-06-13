@@ -2,7 +2,7 @@
 // Tugas: Sebagai manajer proyek, mengatur alur kerja aplikasi.
 
 import { postToServer } from './api.js';
-import { showAlert, renderDailyDashboard, renderMonthlyDashboard } from './ui.js';
+import { showAlert, renderDailyDashboard, renderMonthlyDashboard, renderPivotChart } from './ui.js';
 
 $(document).ready(function() {
     // --- KONFIGURASI DAN ELEMEN UI ---
@@ -18,7 +18,10 @@ $(document).ready(function() {
     const divisiFilterDaily = $('#divisi-filter');
     const dateFilter = $('#date-filter');
     const applyBtnDaily = $('#apply-filter-daily');
-    let dailyTable, dailyStartDate, dailyEndDate;
+    const pivotGroupBy = $('#pivot-group-by');
+    const pivotMetric = $('#pivot-metric');
+    const pivotChartType = $('#pivot-chart-type');
+    let fullDailyData, dailyTable, dailyStartDate, dailyEndDate;
 
     // Elemen Bulanan
     const kebunFilterMonthly = $('#kebun-filter-monthly');
@@ -38,7 +41,10 @@ $(document).ready(function() {
         };
         const data = await postToServer({ action: 'getDashboardData', filters: filters });
         if (data) {
+            fullDailyData = data.detailed_table; // Simpan data untuk pivot
             dailyTable = renderDailyDashboard(data, dailyTable);
+            // Gambar pivot chart awal
+            renderPivotChart(fullDailyData, pivotGroupBy.val(), pivotMetric.val(), pivotChartType.val());
         }
     }
 
@@ -106,5 +112,15 @@ $(document).ready(function() {
     applyBtnMonthly.on('click', fetchAndRenderMonthlyData);
     mainNav.on('click', '.nav-link', function(e) { e.preventDefault(); switchView($(this).data('view')); });
 
+
+
+        // Jika filter pivot diubah, gambar ulang HANYA pivot chart tanpa panggil API lagi
+    $('#pivot-group-by, #pivot-metric, #pivot-chart-type').on('change', function() {
+        if (fullDailyData) {
+            renderPivotChart(fullDailyData, pivotGroupBy.val(), pivotMetric.val(), pivotChartType.val());
+        }
+    });
+
+    
     initializeApp();
 });
