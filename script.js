@@ -130,17 +130,19 @@ $(document).ready(function() {
         monthlyTable = $('#monthly-data-table').DataTable({ data: data.summary_table, columns: columns, responsive: true, dom: "Bfrtip", buttons: ['excel', 'pdf', 'print'] });
     }
 
-    async function fetchAndRenderMonthlyData() {
-        const filters = {
-            year: yearFilter.val(),
-            month: monthFilter.val(),
-            kebun: kebunFilterMonthly.val(),
-            divisi: divisiFilterMonthly.val()
-        };
-        // ===== INI BAGIAN YANG DIPERBAIKI =====
-        const data = await postToServer({ action: 'getMonthlyData', filters: filters });
-        if (data) renderMonthlyDashboard(data);
-    }
+// GANTI DENGAN BLOK BARU YANG BENAR INI
+async function fetchAndRenderMonthlyData() {
+    showAlert('Memproses data bulanan...', 'info');
+    const filters = {
+        year: yearFilter.val(),
+        month: monthFilter.val(),
+        kebun: kebunFilterMonthly.val(),
+        divisi: divisiFilterMonthly.val()
+    };
+    // ===== BARIS INI SUDAH DIPERBAIKI =====
+    const data = await postToServer({ action: 'getMonthlyData', filters: filters });
+    if (data) renderMonthlyDashboard(data);
+}
 
     function initializeMonthlyPage() {
         const currentYear = new Date().getFullYear();
