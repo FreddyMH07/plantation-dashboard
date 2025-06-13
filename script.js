@@ -17,7 +17,9 @@ $(document).ready(function() {
     const divisiFilterDaily = $('#divisi-filter');
     const pivotMetricFilter = $('#pivot-metric-filter');
     const applyBtnDaily = $('#apply-filter-daily');
+    const pivotGroupBy = $('#pivot-group-by');
     const dailyDashboardContent = $('#daily-dashboard-content');
+    const pivotChartType = $('#pivot-chart-type');
     let dailyTable, dailyStartDate, dailyEndDate;
 
     // --- ELEMEN UI BULANAN ---
@@ -61,6 +63,52 @@ $(document).ready(function() {
     // ===================================================================
     // --- LOGIKA DASHBOARD HARIAN ---
     // ===================================================================
+
+     // FUNGSI BARU UNTUK SUPER PIVOT CHART
+    function renderSuperPivotChart(tableData, groupBy, metric, chartType) {
+        const pivotTitle = `Analisis ${metric.replace(/_/g, ' ')} per ${groupBy}`;
+        $('#daily-pivot-chart-title').text(pivotTitle);
+
+        try {
+            // Agregasi data menggunakan reduce
+            const aggregatedData = tableData.reduce((acc, row) => {
+                const group = row[groupBy] || 'Lainnya';
+                const value = parseFloat(row[metric]) || 0;
+                if (!acc[group]) {
+                    acc[group] = 0;
+                }
+                acc[group] += value;
+                return acc;
+            }, {});
+
+            const chartDataArray = [[groupBy, metric.replace(/_/g, ' ')]];
+            for (const key in aggregatedData) {
+                chartDataArray.push([key, aggregatedData[key]]);
+            }
+
+            if (chartDataArray.length <= 1) throw new Error("Tidak ada data untuk diagregasi.");
+
+            const chartData = google.visualization.arrayToDataTable(chartDataArray);
+            let chart;
+            const options = { title: pivotTitle, height: 350, chartArea: { width: '80%', height: '70%' } };
+
+            const chartContainer = document.getElementById('daily-pivot-chart');
+            if (chartType === 'line') chart = new google.visualization.LineChart(chartContainer);
+            else if (chartType === 'pie') chart = new google.visualization.PieChart(chartContainer);
+            else chart = new google.visualization.ColumnChart(chartContainer);
+            
+            chart.draw(chartData, options);
+
+        } catch (e) {
+            console.error("Gagal membuat pivot chart:", e);
+            $('#daily-pivot-chart').html(`<div class="alert alert-warning">Gagal memuat pivot chart: ${e.message}</div>`);
+        }
+    }
+
+
+    
+
+    
     function renderDailyDashboard(data) {
         dailyDashboardContent.empty().hide();
         if (!data || data.isEmpty) {
@@ -83,9 +131,9 @@ $(document).ready(function() {
 
         // TAHAP 2: Siapkan kerangka HTML untuk konten
         const kpiHtml = `<div class="col-lg-3 col-md-6"><div class="kpi-box"><div class="title">ACV Production</div><div class="value">${data.kpi_acv.value}</div></div></div><div class="col-lg-9 col-md-6"><div class="card master-data-card h-100"><div class="card-body row text-center align-items-center"><div class="col"><div class="title">SPH</div><div class="value">${data.master_data_display.sph}</div></div><div class="col"><div class="title">Luas TM (Ha)</div><div class="value">${data.master_data_display.luas_tm}</div></div><div class="col"><div class="title">Pokok (Pkk)</div><div class="value">${data.master_data_display.pkk}</div></div><div class="col"><div class="title">Budget Bulan Ini</div><div class="value">${parseFloat(data.master_data_display.budget_monthly).toLocaleString('id-ID')}</div></div></div></div></div>`;
-        const mainChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><div id="daily-main-chart" style="height: 350px;"></div></div></div></div>`;
-        const pivotChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><div id="daily-pivot-chart" style="height: 350px;"></div></div></div></div>`;
-        const tableHtml = `<div class="col-12"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title fw-bold">Detail Data Harian</h5><table id="daily-data-table" class="table table-striped table-bordered" style="width:100%"></table></div></div></div>`;
+        const mainChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Budget vs Realisasi</h5><div id="daily-main-chart" style="height: 350px;"></div></div></div></div>`;
+        const pivotChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title" id="daily-pivot-chart-title">Analisis Dinamis</h5><div id="daily-pivot-chart" style="height: 350px;"></div></div></div></div>`;
+        const tableHtml = `<div class="col-12"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title fw-bold">Detail Data Harian</h5><table id="daily-data-table" class="table table-striped" style="width:100%"></table></div></div></div>`;
         
         // Render semua kerangka HTML ke halaman
         dailyDashboardContent.html(kpiHtml + mainChartHtml + pivotChartHtml + tableHtml).show();
@@ -95,6 +143,11 @@ $(document).ready(function() {
             const mainChartData = google.visualization.arrayToDataTable([['Metrik', 'Nilai (Kg)', { role: 'style' }], ['Budget Harian', data.daily_comparison.budget, '#6c757d'], ['Realisasi Kebun', data.daily_comparison.kebun, '#17a2b8'], ['Realisasi PKS', data.daily_comparison.pks, '#0d6efd']]);
             new google.visualization.ColumnChart(document.getElementById('daily-main-chart')).draw(mainChartData, { title: 'Budget Harian vs Realisasi (Kg)', legend: { position: 'top' }, chartArea: { width: '80%' } });
         } catch(e) { $('#daily-main-chart').html(`<div class="alert alert-warning">Gagal memuat grafik utama.</div>`); }
+
+
+        // Panggil fungsi render pivot chart baru
+        renderSuperPivotChart(data.detailed_table, pivotGroupBy.val(), pivotMetric.val(), pivotChartType.val());
+
         
         try {
             const metricY = pivotMetricFilter.val();
@@ -234,12 +287,32 @@ $(document).ready(function() {
                 data.divisi.forEach(item => filterEl.append($('<option>', { value: item, text: item })));
             });
             
-            dailyStartDate = moment().startOf('month');
+            // --- PERUBAHAN DEFAULT TANGGAL ---
+            // Atur default ke 'Hari Ini'
+            dailyStartDate = moment();
             dailyEndDate = moment();
-            dateFilter.daterangepicker({ startDate: dailyStartDate, endDate: dailyEndDate, locale: { format: 'DD MMMM YYYY' }, ranges: { 'Hari Ini': [moment(), moment()], 'Bulan Ini': [moment().startOf('month'), moment().endOf('month')], 'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')] } }, (start, end) => { dailyStartDate = start; dailyEndDate = end; });
+            dateFilter.daterangepicker({ 
+                startDate: dailyStartDate, 
+                endDate: dailyEndDate, 
+                locale: { format: 'DD MMMM YYYY' },
+                // --- PENAMBAHAN INTERVAL BARU ---
+                ranges: {
+                   'Hari Ini': [moment(), moment()],
+                   'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                   '7 Hari Terakhir': [moment().subtract(6, 'days'), moment()],
+                   '30 Hari Terakhir': [moment().subtract(29, 'days'), moment()],
+                   'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
+                   'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                   'Kuartal Ini': [moment().startOf('quarter'), moment().endOf('quarter')],
+                   'Tahun Ini': [moment().startOf('year'), moment().endOf('year')],
+                }
+            }, (start, end) => { dailyStartDate = start; dailyEndDate = end; });
             
             $('[disabled]').prop('disabled', false);
-            showAlert('Aplikasi siap. Silakan pilih filter.');
+            showAlert('Aplikasi siap. Memuat data untuk hari ini...');
+
+            // --- OTOMATIS MUAT DATA SAAT PERTAMA KALI DIBUKA ---
+            fetchAndRenderDailyData();
         }
     }
     
