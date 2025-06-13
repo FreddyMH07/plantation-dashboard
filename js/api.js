@@ -1,7 +1,7 @@
 // File: js/api.js
 // Tugas: Hanya untuk berbicara dengan Google Apps Script API.
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs_A3jUSpJ34L2IjNjsiQEPbuhc4UDBLxiN_BgMqnjcaV_8LGFkMUdBoui9VFCevw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYvY2AAijGgxs6c0Nm9179T-8c5VHfYNN3J5kbqIpAowFTUJLk2WmE6tm884N0QFMu/exec";
 const loader = $('#loader');
 
 export async function postToServer(requestBody) {
