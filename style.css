@@ -8,4 +8,5 @@ body { background-color: #f4f7f9; }
 .master-data-card .value { font-size: 1.5rem; font-weight: 600; }
 .dt-buttons .btn-secondary { background-color: #6c757d; border-color: #6c757d; }
 /* Style untuk navigasi aktif */
-.nav-tabs .nav-link.active { font-weight: bold; border-color: #dee2e6 #dee2e6 #fff; }
+.nav-tabs .nav-link { cursor: pointer; }
+.nav-tabs .nav-link.active { font-weight: bold; color: #0d6efd; border-color: #dee2e6 #dee2e6 #fff; }
