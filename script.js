@@ -3,7 +3,7 @@
 // ===================================================================
 $(document).ready(function() {
     // --- KONFIGURASI PENTING ---
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz3ACEPp9dT0veV8JZu2mjDF1N5J7_TfPPJEzq_6VcQVi84xqKQhq-VlAjW_z4H_dMq/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFoeQkZI7lNA-hHYfQFPmNublVsZSgMCNmoty9zXnFFmEk2jhXCpDDfgBfALzvRYDF/exec";
 
     // --- ELEMEN UI UMUM ---
     const loader = $('#loader');
