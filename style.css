@@ -17,3 +17,5 @@ body { background-color: #f4f7f9; }
 .acv-good { background-color: #d1e7dd !important; color: #0f5132; font-weight: 600; }
 .acv-warning { background-color: #fff3cd !important; color: #664d03; }
 .acv-bad { background-color: #f8d7da !important; color: #842029; font-weight: 600; }
+.text-end { text-align: right; }
+.fw-bold { font-weight: 600 !important; }
