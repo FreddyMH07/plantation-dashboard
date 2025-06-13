@@ -12,6 +12,7 @@
 </head>
 <body>
     <div id="loader" class="loader-overlay"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Memuat...</p></div>
+    
     <nav class="navbar navbar-dark bg-dark sticky-top shadow-sm"><div class="container-fluid"><span class="navbar-brand fw-bold"><i class="fas fa-chart-line me-2"></i>Plantation Analytics</span></div></nav>
     
     <div class="container-fluid p-4">
@@ -27,10 +28,11 @@
                 <div class="card-header fw-bold">Filter Data Harian</div>
                 <div class="card-body">
                     <div class="row g-3 align-items-end">
-                        <div class="col-md-4"><label class="form-label">Interval Tanggal</label><input type="text" id="date-filter" class="form-control" disabled></div>
-                        <div class="col-md-3"><label class="form-label">Kebun</label><select id="kebun-filter" class="form-select" disabled></select></div>
-                        <div class="col-md-3"><label class="form-label">Divisi</label><select id="divisi-filter" class="form-select" disabled></select></div>
-                        <div class="col-md-2"><button id="apply-filter-daily" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan</button></div>
+                        <div class="col-lg-3 col-md-6"><label class="form-label">Interval Tanggal</label><input type="text" id="date-filter" class="form-control" disabled></div>
+                        <div class="col-lg-2 col-md-6"><label class="form-label">Kebun</label><select id="kebun-filter" class="form-select" disabled></select></div>
+                        <div class="col-lg-2 col-md-6"><label class="form-label">Divisi</label><select id="divisi-filter" class="form-select" disabled></select></div>
+                        <div class="col-lg-2 col-md-6"><label class="form-label">Pivot Metric</label><select id="pivot-metric-filter" class="form-select"><option value="AKP_Panen">AKP Panen</option><option value="Output_Kg_HK">Output Kg/HK</option><option value="Tonase_Panen_Kg">Tonase Panen (Kg)</option><option value="BJR_Hari_Ini">BJR Hari Ini</option></select></div>
+                        <div class="col-lg-3 col-md-12"><button id="apply-filter-daily" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan Filter Harian</button></div>
                     </div>
                 </div>
             </div>
@@ -44,8 +46,8 @@
                      <div class="row g-3 align-items-end">
                         <div class="col-md-3"><label class="form-label">Tahun</label><select id="year-filter" class="form-select"></select></div>
                         <div class="col-md-3"><label class="form-label">Bulan</label><select id="month-filter" class="form-select"></select></div>
-                        <div class="col-md-3"><label class="form-label">Kebun</label><select id="kebun-filter-monthly" class="form-select"></select></div>
-                        <div class="col-md-3"><button id="apply-filter-monthly" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i> Terapkan</button></div>
+                        <div class="col-md-3"><label class="form-label">Kebun</label><select id="kebun-filter-monthly" class="form-select" disabled></select></div>
+                        <div class="col-md-3"><button id="apply-filter-monthly" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan Filter Bulanan</button></div>
                      </div>
                  </div>
             </div>
