@@ -121,4 +121,27 @@ $(document).ready(function() {
     // --- EVENT LISTENERS & INISIALISASI ---
     applyBtn.on('click', fetchAndRenderData);
     initializePage();
+
+    // --- LOGIKA NAVIGASI ---
+$('#nav-monthly').on('click', function(e) {
+    e.preventDefault();
+    $('#daily-view').hide();
+    $('#monthly-view').show();
+    // Panggil fungsi untuk memuat data awal dashboard bulanan
+    initializeMonthlyPage(); 
+});
+// Tambahkan event listener untuk kembali ke dashboard harian
+
+// --- FUNGSI BARU UNTUK HALAMAN BULANAN ---
+function initializeMonthlyPage() {
+    console.log("Memuat halaman bulanan...");
+    // Logika untuk mengisi filter tahun dan bulan
+    // Panggil fetchAndRenderMonthlyData() saat filter diterapkan
+}
+
+async function fetchAndRenderMonthlyData() {
+    const filters = { /* ambil filter bulan, tahun, dll */ };
+    const data = await postToServer({ action: 'getMonthlyData', filters: filters });
+    // renderMonthlyDashboard(data); // Fungsi render baru untuk data bulanan
+}
 });
