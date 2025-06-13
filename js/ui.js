@@ -5,6 +5,56 @@ export function showAlert(message, type = 'info') {
     $('#alert-box').removeClass('alert-info alert-warning alert-danger').addClass(`alert-${type}`).text(message).show();
 }
 
+
+// --- FUNGSI BARU UNTUK PIVOT CHART ---
+export function renderPivotChart(tableData, groupBy, metric, chartType) {
+    const metricTitle = metric.replace(/_/g, ' ');
+    const groupByTitle = groupBy.replace(/_/g, ' ');
+    const pivotTitle = `Analisis ${metricTitle} per ${groupByTitle}`;
+    
+    try {
+        const aggregatedData = tableData.reduce((acc, row) => {
+            const groupKey = (groupBy === 'Tanggal') ? moment(row[groupBy], "DD MMM YYYY").format("D MMM") : (row[groupBy] || 'Lainnya');
+            const value = parseFloat(row[metric]) || 0;
+            if (!acc[groupKey]) acc[groupKey] = 0;
+            acc[groupKey] += value;
+            return acc;
+        }, {});
+
+        const chartDataArray = [[groupByTitle, metricTitle, { role: 'style' }]];
+        const colors = ['#4285F4', '#DB4437', '#F4B400', '#0F9D58', '#AB47BC', '#00ACC1', '#FF7043', '#9E9D24'];
+        let colorIndex = 0;
+        for (const key in aggregatedData) {
+            chartDataArray.push([key, aggregatedData[key], colors[colorIndex % colors.length]]);
+            colorIndex++;
+        }
+
+        if (chartDataArray.length <= 1) throw new Error("Data tidak cukup untuk diagregasi.");
+
+        const chartData = google.visualization.arrayToDataTable(chartDataArray);
+        let chart;
+        const options = { title: pivotTitle, height: 350, chartArea: { width: '80%', height: '70%' }, legend: { position: 'none' } };
+        const chartContainer = document.getElementById('daily-pivot-chart');
+
+        if (chartType === 'line') chart = new google.visualization.LineChart(chartContainer);
+        else if (chartType === 'pie') chart = new google.visualization.PieChart(chartContainer);
+        else chart = new google.visualization.ColumnChart(chartContainer);
+        
+        chart.draw(chartData, options);
+    } catch (e) {
+        console.error("Gagal membuat pivot chart:", e);
+        $('#daily-pivot-chart').html(`<div class="alert alert-warning">Gagal memuat pivot chart: ${e.message}</div>`);
+    }
+}
+
+
+
+
+
+
+
+
+
 export function renderDailyDashboard(data, dailyTable) {
     const dailyDashboardContent = $('#daily-dashboard-content');
     dailyDashboardContent.empty().hide();
