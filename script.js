@@ -105,70 +105,90 @@ $(document).ready(function() {
         }
     }
 
-    function renderDailyDashboard(data) {
-        dailyDashboardContent.empty().hide();
-        if (!data || data.isEmpty) {
-            showAlert(data.message || 'Tidak ada data.', 'warning');
-            return;
-        }
+    // Tempel blok fungsi lengkap ini ke tempat yang kosong tadi
+function renderDailyDashboard(data) {
+    dailyDashboardContent.empty().hide();
+    if (!data || data.isEmpty) {
+        showAlert(data.message || 'Tidak ada data untuk kombinasi filter yang dipilih.', 'warning');
+        return;
+    }
 
-        const tableData = data.detailed_table.map((row, index) => {
-            const budgetHarian = parseFloat(row.Budget_Harian) || 0;
-            const realisasiPKS = parseFloat(row.Timbang_PKS) || 0;
-            const acvHarian = budgetHarian > 0 ? (realisasiPKS / budgetHarian) * 100 : 0;
-            return { ...row, NO: index + 1, ACV_Prod_Harian: acvHarian, Realisasi_PKS_Harian: realisasiPKS };
-        });
-
-        const kpiHtml = `<div class="col-lg-3 col-md-6"><div class="kpi-box"><div class="title">ACV Production</div><div class="value">${data.kpi_acv.value}</div></div></div><div class="col-lg-9 col-md-6"><div class="card master-data-card h-100"><div class="card-body row text-center align-items-center"><div class="col"><div class="title">SPH</div><div class="value">${data.master_data_display.sph}</div></div><div class="col"><div class="title">Luas TM (Ha)</div><div class="value">${data.master_data_display.luas_tm}</div></div><div class="col"><div class="title">Pokok (Pkk)</div><div class="value">${data.master_data_display.pkk}</div></div><div class="col"><div class="title">Budget Bulan Ini</div><div class="value">${parseFloat(data.master_data_display.budget_monthly).toLocaleString('id-ID')}</div></div></div></div></div>`;
-        const mainChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Budget vs Realisasi</h5><div id="daily-main-chart" style="height: 350px;"></div></div></div></div>`;
-        const pivotChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title" id="daily-pivot-chart-title">Analisis Dinamis</h5><div id="daily-pivot-chart" style="height: 350px;"></div></div></div></div>`;
-        const tableHtml = `<div class="col-12"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title fw-bold">Detail Data Harian</h5><div class="table-responsive"><table id="daily-data-table" class="table table-striped table-hover" style="width:100%"></table></div></div></div></div>`;
+    // TAHAP 1: Olah data mentah dari server untuk tabel
+    const tableData = data.detailed_table.map((row, index) => {
+        const budgetHarian = parseFloat(row.Budget_Harian) || 0;
+        const realisasiPKS = parseFloat(row.Timbang_PKS) || 0;
+        // Hitung ACV Harian berdasarkan Realisasi PKS
+        const acvHarian = budgetHarian > 0 ? (realisasiPKS / budgetHarian) * 100 : 0;
         
-        dailyDashboardContent.html(kpiHtml + tableHtml + mainChartHtml + pivotChartHtml).show();
+        return {
+            ...row, // <-- data asli dari server
+            NO: index + 1,
+            ACV_Prod_Harian: acvHarian, // Kolom baru untuk pewarnaan & tampilan
+            Realisasi_PKS_Harian: realisasiPKS, // Kolom baru untuk tampilan
+        };
+    });
 
-        try {
-            const mainChartData = google.visualization.arrayToDataTable([['Metrik', 'Nilai (Kg)', { role: 'style' }], ['Budget Harian', data.daily_comparison.budget, '#6c757d'], ['Realisasi Kebun', data.daily_comparison.kebun, '#17a2b8'], ['Realisasi PKS', data.daily_comparison.pks, '#0d6efd']]);
-            new google.visualization.ColumnChart(document.getElementById('daily-main-chart')).draw(mainChartData, { legend: { position: 'top' }, chartArea: { width: '80%' } });
-        } catch(e) { $('#daily-main-chart').html(`<div class="alert alert-warning">Gagal memuat grafik utama.</div>`); }
-        
-        renderSuperPivotChart(tableData, pivotGroupBy.val(), pivotMetric.val(), pivotChartType.val());
+    // TAHAP 2: Siapkan kerangka HTML untuk konten
+    const kpiHtml = `<div class="col-lg-3 col-md-6"><div class="kpi-box"><div class="title">ACV Production</div><div class="value">${data.kpi_acv.value}</div></div></div><div class="col-lg-9 col-md-6"><div class="card master-data-card h-100"><div class="card-body row text-center align-items-center"><div class="col"><div class="title">SPH</div><div class="value">${data.master_data_display.sph}</div></div><div class="col"><div class="title">Luas TM (Ha)</div><div class="value">${data.master_data_display.luas_tm}</div></div><div class="col"><div class="title">Pokok (Pkk)</div><div class="value">${data.master_data_display.pkk}</div></div><div class="col"><div class="title">Budget Bulan Ini</div><div class="value">${parseFloat(data.master_data_display.budget_monthly).toLocaleString('id-ID')}</div></div></div></div></div>`;
+    const mainChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title">Budget vs Realisasi</h5><div id="daily-main-chart" style="height: 350px;"></div></div></div></div>`;
+    const pivotChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title" id="daily-pivot-chart-title">Analisis Dinamis</h5><div id="daily-pivot-chart" style="height: 350px;"></div></div></div></div>`;
+    const tableHtml = `<div class="col-12"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title fw-bold">Detail Data Harian</h5><div class="table-responsive"><table id="daily-data-table" class="table table-striped table-hover" style="width:100%"></table></div></div></div></div>`;
+    
+    // Render semua kerangka HTML ke halaman dengan tata letak yang benar
+    dailyDashboardContent.html(kpiHtml + mainChartHtml + pivotChartHtml + tableHtml).show();
 
-        if (dailyTable) dailyTable.destroy();
+    // TAHAP 3: Render Grafik
+    try {
+        const mainChartData = google.visualization.arrayToDataTable([['Metrik', 'Nilai (Kg)', { role: 'style' }], ['Budget Harian', data.daily_comparison.budget, '#6c757d'], ['Realisasi Kebun', data.daily_comparison.kebun, '#17a2b8'], ['Realisasi PKS', data.daily_comparison.pks, '#0d6efd']]);
+        new google.visualization.ColumnChart(document.getElementById('daily-main-chart')).draw(mainChartData, { legend: { position: 'top' }, chartArea: { width: '80%' } });
+    } catch(e) { $('#daily-main-chart').html(`<div class="alert alert-warning">Gagal memuat grafik utama.</div>`); }
+    
+    // Panggil fungsi render pivot chart
+    renderSuperPivotChart(tableData, pivotGroupBy.val(), pivotMetric.val(), pivotChartType.val());
+
+    // TAHAP 4: Render DataTables dengan Konfigurasi Lengkap dan Benar
+    if (dailyTable) dailyTable.destroy();
+    
+    dailyTable = $('#daily-data-table').DataTable({
+        data: tableData, // Gunakan data yang sudah diolah
+        columns: [
+             { title: 'No', data: 'NO' },
+             { title: 'Kebun', data: 'Kebun' },
+             { title: 'Budget Harian', data: 'Budget_Harian', className: 'text-end', render: $.fn.dataTable.render.number('.', ',', 0, '', ' Kg') },
+             { title: 'Realisasi PKS Harian', data: 'Realisasi_PKS_Harian', className: 'text-end fw-bold', render: $.fn.dataTable.render.number('.', ',', 0, '', ' Kg') },
+             { title: 'Refraksi (Kg)', data: 'Refraksi_Kg', className: 'text-end' },
+             { title: 'Refraksi (%)', data: 'Refraksi_Persen', className: 'text-end' },
+             { title: 'BJR Hari Ini', data: 'BJR_Hari_Ini', className: 'text-end' },
+             { title: 'ACV Prod Harian', data: 'ACV_Prod_Harian', className: 'text-end', render: function(data) { return data.toFixed(2) + ' %'; } },
+             // --- Kolom lain yang tersedia di "Pilih Kolom" ---
+             { title: 'Divisi', data: 'Divisi' },
+             { title: 'Tanggal', data: 'Tanggal' },
+             { title: 'Tonase Panen (Kg)', data: 'Tonase_Panen_Kg' },
+             { title: 'Timbang Kebun', data: 'Timbang_Kebun' }
+             // Tambahkan kolom lain dari data.detailed_table di sini jika perlu
+        ],
+        responsive: true,
+        dom: "Bfrtip",
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'colvis', text: 'Pilih Kolom' }],
+        language: { url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/id.json' },
         
-        dailyTable = $('#daily-data-table').DataTable({
-            data: tableData,
-            columns: [
-                 { title: 'No', data: 'NO' },
-                 { title: 'Kebun', data: 'Kebun' },
-                 { title: 'Budget Harian', data: 'Budget_Harian', className: 'text-end', render: $.fn.dataTable.render.number('.', ',', 0, '', ' Kg') },
-                 { title: 'Realisasi PKS Harian', data: 'Realisasi_PKS_Harian', className: 'text-end fw-bold', render: $.fn.dataTable.render.number('.', ',', 0, '', ' Kg') },
-                 { title: 'Refraksi (Kg)', data: 'Refraksi_Kg', className: 'text-end' },
-                 { title: 'Refraksi (%)', data: 'Refraksi_Persen', className: 'text-end' },
-                 { title: 'BJR Hari Ini', data: 'BJR_Hari_Ini', className: 'text-end' },
-                 { title: 'ACV Prod Harian', data: 'ACV_Prod_Harian', className: 'text-end', render: function(data) { return data.toFixed(2) + ' %'; } },
-                 { title: 'Divisi', data: 'Divisi' }, { title: 'Tanggal', data: 'Tanggal' },
-                 { title: 'AKP Panen', data: 'AKP_Panen' }, { title: 'TK Panen', data: 'TK_Panen' },
-                 { title: 'Luas Panen', data: 'Luas_Panen' }, { title: 'JJG Panen', data: 'JJG_Panen' },
-                 { title: 'JJG Kirim', data: 'JJG_Kirim' }, { title: 'Ketrek', data: 'Ketrek' },
-                 { title: 'Total JJG Kirim', data: 'Total_JJG_Kirim' }, { title: 'Tonase Panen (Kg)', data: 'Tonase_Panen_Kg' },
-                 { title: 'Restant Jjg', data: 'Restant_Jjg' }, { title: 'Output Kg/HK', data: 'Output_Kg_HK' },
-                 { title: 'Output Ha/HK', data: 'Output_Ha_HK' }, { title: 'Timbang Kebun', data: 'Timbang_Kebun' },
-                 { title: 'Timbang PKS', data: 'Timbang_PKS' }
-            ],
-            responsive: true,
-            dom: "Bfrtip",
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'colvis', text: 'Pilih Kolom' }],
-            language: { url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/id.json' },
-            "columnDefs": [ { "visible": false, "targets": [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22] } ],
-            "createdRow": function(row, data, dataIndex) {
-                const acvCell = $('td', row).eq(7);
-                const acvValue = parseFloat(data.ACV_Prod_Harian);
+        // Atur kolom mana saja yang terlihat secara default
+        "columnDefs": [
+            { "visible": false, "targets": [8, 9, 10, 11] } // Sembunyikan: Divisi, Tanggal, Tonase Panen, Timbang Kebun
+        ],
+        
+        // Tambahkan pewarnaan interaktif per baris
+        "createdRow": function(row, data, dataIndex) {
+            const acvCell = $('td', row).eq(7); // Kolom ke-8 adalah 'ACV Prod Harian'
+            const acvValue = parseFloat(data.ACV_Prod_Harian);
+            if (!isNaN(acvValue)) {
                 if (acvValue >= 100) acvCell.addClass('acv-good');
                 else if (acvValue >= 80) acvCell.addClass('acv-warning');
                 else acvCell.addClass('acv-bad');
             }
-        });
-    }
+        }
+    });
+}
 
     async function fetchAndRenderDailyData() { /* ... kode sama ... */ }
     function renderMonthlyDashboard(data) { /* ... kode sama ... */ }
