@@ -1,3 +1,6 @@
+// ===================================================================
+// === Plantation Analytics Dashboard - Final Script ===
+// ===================================================================
 $(document).ready(function() {
     // --- KONFIGURASI PENTING ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwVP2V-I73WqIkKaTQmWkb40Qhf_xJKjxMGEK2AqISjhG4ii-R9fvWtKgWGVgxRDk6/exec";
@@ -35,20 +38,19 @@ $(document).ready(function() {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(requestBody),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Header ini penting untuk menghindari error CORS preflight
                 mode: 'cors',
                 redirect: 'follow'
             });
-            // Selalu parse respons sebagai JSON, karena server kita selalu mengirim JSON
             const data = await response.json();
-            // Jika ada properti 'error' di dalam JSON, lemparkan sebagai error
             if (data.error) {
                 throw new Error(data.error);
             }
             return data;
         } catch (error) {
-            showAlert(`Error fetching data: ${error.message}`, 'danger');
+            showAlert(`Error: ${error.message}`, 'danger');
             console.error('Error in postToServer:', error);
+            return null; // Kembalikan null jika ada error
         } finally {
             loader.hide();
         }
@@ -130,19 +132,17 @@ $(document).ready(function() {
         monthlyTable = $('#monthly-data-table').DataTable({ data: data.summary_table, columns: columns, responsive: true, dom: "Bfrtip", buttons: ['excel', 'pdf', 'print'] });
     }
 
-// GANTI DENGAN BLOK BARU YANG BENAR INI
-async function fetchAndRenderMonthlyData() {
-    showAlert('Memproses data bulanan...', 'info');
-    const filters = {
-        year: yearFilter.val(),
-        month: monthFilter.val(),
-        kebun: kebunFilterMonthly.val(),
-        divisi: divisiFilterMonthly.val()
-    };
-    // ===== BARIS INI SUDAH DIPERBAIKI =====
-    const data = await postToServer({ action: 'getMonthlyData', filters: filters });
-    if (data) renderMonthlyDashboard(data);
-}
+    async function fetchAndRenderMonthlyData() {
+        const filters = {
+            year: yearFilter.val(),
+            month: monthFilter.val(),
+            kebun: kebunFilterMonthly.val(),
+            divisi: divisiFilterMonthly.val()
+        };
+        // ===== INI ADALAH BARIS KUNCI YANG DIPERBAIKI =====
+        const data = await postToServer({ action: 'getMonthlyData', filters: filters });
+        if (data) renderMonthlyDashboard(data);
+    }
 
     function initializeMonthlyPage() {
         const currentYear = new Date().getFullYear();
@@ -177,6 +177,7 @@ async function fetchAndRenderMonthlyData() {
         google.charts.load('current', {'packages':['corechart']});
 
         const data = await postToServer({ action: 'getInitialData' });
+        
         if (data) {
             [kebunFilterDaily, kebunFilterMonthly].forEach(filterEl => {
                 filterEl.empty().append($('<option>', { text: 'SEMUA KEBUN' }));
