@@ -169,7 +169,7 @@ $(document).ready(function() {
                 else acvCell.addClass('acv-bad');
             }
         });
-
+}
     async function fetchAndRenderDailyData() {
         const filters = { startDate: dailyStartDate.startOf('day').toISOString(), endDate: dailyEndDate.endOf('day').toISOString(), kebun: kebunFilterDaily.val(), divisi: divisiFilterDaily.val() };
         const data = await postToServer({ action: 'getDashboardData', filters: filters });
