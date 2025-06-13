@@ -23,43 +23,24 @@
 
         <div id="alert-box" class="alert mt-4" style="display: none;"></div>
 
-<div id="daily-view">
-    <div class="card shadow-sm mb-4">
-        <div class="card-header fw-bold">Filter Data Harian</div>
-        <div class="card-body">
-            <div class="row g-3 align-items-end">
-                <div class="col-lg-3 col-md-6"><label class="form-label">Interval Tanggal</label><input type="text" id="date-filter" class="form-control" disabled></div>
-                <div class="col-lg-2 col-md-6"><label class="form-label">Kebun</label><select id="kebun-filter" class="form-select" disabled></select></div>
-                <div class="col-lg-2 col-md-6"><label class="form-label">Divisi</label><select id="divisi-filter" class="form-select" disabled></select></div>
-                <div class="col-lg-2"><button id="apply-filter-daily" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan Filter</button></div>
+        <div id="daily-view">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header fw-bold">Filter Data Harian</div>
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-3 col-md-6"><label class="form-label">Interval Tanggal</label><input type="text" id="date-filter" class="form-control" disabled></div>
+                        <div class="col-lg-2 col-md-6"><label class="form-label">Kebun</label><select id="kebun-filter" class="form-select" disabled></select></div>
+                        <div class="col-lg-2 col-md-6"><label class="form-label">Divisi</label><select id="divisi-filter" class="form-select" disabled></select></div>
+                        <div class="col-lg-2 col-md-6"><label class="form-label">Pivot Metric</label><select id="pivot-metric-filter" class="form-select"><option value="Tonase_Panen_Kg">Tonase Panen (Kg)</option><option value="Output_Kg_HK">Output Kg/HK</option><option value="BJR_Hari_Ini">BJR Hari Ini</option></select></div>
+                        <div class="col-lg-3 col-md-12"><button id="apply-filter-daily" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan Filter</button></div>
+                    </div>
+                </div>
             </div>
-            <hr>
-            <div class="row g-3 align-items-end">
-                <div class="col-12"><h6 class="card-subtitle mb-2 text-muted">Analisis Dinamis (Super Pivot Chart)</h6></div>
-                <div class="col-lg-3 col-md-4"><label class="form-label">Group By</label><select id="pivot-group-by" class="form-select"><option value="Tanggal">Tanggal</option><option value="Kebun">Kebun</option><option value="Divisi">Divisi</option></select></div>
-                <div class="col-lg-3 col-md-4"><label class="form-label">Metric (Nilai)</label><select id="pivot-metric" class="form-select"><option value="Tonase_Panen_Kg">Tonase Panen (Kg)</option><option value="Output_Kg_HK">Output Kg/HK</option><option value="AKP_Panen">AKP Panen</option><option value="BJR_Hari_Ini">BJR Hari Ini</option></select></div>
-                <div class="col-lg-3 col-md-4"><label class="form-label">Tipe Chart</label><select id="pivot-chart-type" class="form-select"><option value="line">Line Chart</option><option value="bar">Bar Chart</option><option value="pie">Pie Chart</option></select></div>
-            </div>
+            <div id="daily-dashboard-content" class="row g-4" style="display: none;"></div>
         </div>
-    </div>
-    <div id="daily-dashboard-content" class="row g-4" style="display: none;"></div>
-</div>
 
         <div id="monthly-view" style="display: none;">
-            <div class="card shadow-sm mb-4">
-                 <div class="card-header fw-bold">Filter Data Bulanan</div>
-                 <div class="card-body">
-                     <div class="row g-3 align-items-end">
-                        <div class="col-md-3"><label class="form-label">Tahun</label><select id="year-filter" class="form-select" disabled></select></div>
-                        <div class="col-md-3"><label class="form-label">Bulan</label><select id="month-filter" class="form-select" disabled></select></div>
-                        <div class="col-md-2"><label class="form-label">Kebun</label><select id="kebun-filter-monthly" class="form-select" disabled></select></div>
-                        <div class="col-md-2"><label class="form-label">Divisi</label><select id="divisi-filter-monthly" class="form-select" disabled></select></div>
-                        <div class="col-md-2"><button id="apply-filter-monthly" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan</button></div>
-                     </div>
-                 </div>
-            </div>
-            <div id="monthly-dashboard-content" class="row g-4" style="display: none;"></div>
-        </div>
+             </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
@@ -68,9 +49,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-2.0.8/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script> <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-2.0.8/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/datatables.min.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
