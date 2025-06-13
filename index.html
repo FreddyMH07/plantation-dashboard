@@ -32,6 +32,28 @@
                     <div class="col-md-3"><label class="form-label">Kebun</label><select id="kebun-filter" class="form-select" disabled></select></div>
                     <div class="col-md-3"><label class="form-label">Divisi</label><select id="divisi-filter" class="form-select" disabled></select></div>
                     <div class="col-md-2"><button id="apply-filter" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan</button></div>
+                    <div class="col-12 mt-3 pt-3 border-top">
+    <div class="row align-items-end">
+        <div class="col-md-4">
+            <label class="form-label"><b>Pivot Chart:</b> Sumbu X (Horizontal)</label>
+            <select id="pivot-x" class="form-select">
+                <option value="Tanggal">Tanggal</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Sumbu Y (Vertikal)</label>
+            <select id="pivot-y" class="form-select">
+                <option value="AKP_Panen">AKP Panen</option>
+                <option value="Output_Kg_HK">Output Kg/HK</option>
+                <option value="Tonase_Panen_Kg">Tonase Panen (Kg)</option>
+                <option value="BJR_Hari_Ini">BJR Hari Ini</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <p class="form-text">Pilih metrik untuk dibandingkan. Grafik akan diperbarui saat Anda menekan tombol "Terapkan".</p>
+        </div>
+    </div>
+</div>
                 </div>
             </div>
         </div>
