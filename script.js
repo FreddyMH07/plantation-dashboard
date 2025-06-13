@@ -1,7 +1,8 @@
 $(document).ready(function() {
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwVP2V-I73WqIkKaTQmWkb40Qhf_xJKjxMGEK2AqISjhG4ii-R9fvWtKgWGVgxRDk6/exec";
-
+   
     // --- ELEMEN UI UMUM ---
+    const divisiFilterMonthly = $('#divisi-filter-monthly'); 
     const loader = $('#loader');
     const alertBox = $('#alert-box');
     const mainNav = $('#main-nav');
@@ -126,10 +127,18 @@ $(document).ready(function() {
     }
 
     async function fetchAndRenderMonthlyData() {
-        const filters = { year: yearFilter.val(), month: monthFilter.val(), kebun: kebunFilterMonthly.val(), divisi: 'SEMUA DIVISI' };
+        showAlert('Memproses data bulanan...', 'info');
+        const filters = {
+            year: yearFilter.val(),
+            month: monthFilter.val(),
+            kebun: kebunFilterMonthly.val(),
+            divisi: divisiFilterMonthly.val() // <-- Ambil nilai dari filter divisi bulanan
+        };
+        // Panggilan API diperbaiki di sini
         const data = await postToServer({ action: 'getMonthlyData', filters: filters });
         renderMonthlyDashboard(data);
     }
+    
 
     function initializeMonthlyPage() {
         const currentYear = new Date().getFullYear();
@@ -164,19 +173,24 @@ $(document).ready(function() {
         const data = await postToServer({ action: 'getInitialData' });
         
         if (data) {
-            // Isi filter untuk kedua view
+            // Isi filter Kebun untuk kedua view
             [kebunFilterDaily, kebunFilterMonthly].forEach(filterEl => {
                 filterEl.empty().append($('<option>', { text: 'SEMUA KEBUN' }));
                 data.kebun.forEach(item => filterEl.append($('<option>', { value: item, text: item })));
             });
-            divisiFilterDaily.empty().append($('<option>', { text: 'SEMUA DIVISI' }));
-            data.divisi.forEach(item => divisiFilterDaily.append($('<option>', { value: item, text: item })));
+            // Isi filter Divisi untuk kedua view
+            [divisiFilterDaily, divisiFilterMonthly].forEach(filterEl => {
+                filterEl.empty().append($('<option>', { text: 'SEMUA DIVISI' }));
+                data.divisi.forEach(item => filterEl.append($('<option>', { value: item, text: item })));
+            });
             
             // Inisialisasi Date Picker untuk view harian
             dailyStartDate = moment().startOf('month');
             dailyEndDate = moment();
             dateFilter.daterangepicker({ startDate: dailyStartDate, endDate: dailyEndDate, locale: { format: 'DD MMMM YYYY' }, ranges: { 'Hari Ini': [moment(), moment()], 'Bulan Ini': [moment().startOf('month'), moment().endOf('month')], 'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')] } }, (start, end) => { dailyStartDate = start; dailyEndDate = end; });
             
+            // Inisialisasi filter tahun dan bulan
+            initializeMonthlyPage();
             $('[disabled]').prop('disabled', false);
             showAlert('Aplikasi siap. Silakan pilih filter.');
         }
