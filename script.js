@@ -15,11 +15,11 @@ $(document).ready(function() {
     const dateFilter = $('#date-filter');
     const kebunFilterDaily = $('#kebun-filter');
     const divisiFilterDaily = $('#divisi-filter');
-    const pivotMetricFilter = $('#pivot-metric-filter');
-    const applyBtnDaily = $('#apply-filter-daily');
     const pivotGroupBy = $('#pivot-group-by');
-    const dailyDashboardContent = $('#daily-dashboard-content');
+    const pivotMetric = $('#pivot-metric');
     const pivotChartType = $('#pivot-chart-type');
+    const applyBtnDaily = $('#apply-filter-daily');
+    const dailyDashboardContent = $('#daily-dashboard-content');
     let dailyTable, dailyStartDate, dailyEndDate;
 
     // --- ELEMEN UI BULANAN ---
@@ -65,48 +65,37 @@ $(document).ready(function() {
     // ===================================================================
 
      // FUNGSI BARU UNTUK SUPER PIVOT CHART
-    function renderSuperPivotChart(tableData, groupBy, metric, chartType) {
-        const pivotTitle = `Analisis ${metric.replace(/_/g, ' ')} per ${groupBy}`;
+function renderSuperPivotChart(tableData, groupBy, metric, chartType) {
+        const metricTitle = metric.replace(/_/g, ' ');
+        const groupByTitle = groupBy.replace(/_/g, ' ');
+        const pivotTitle = `Analisis ${metricTitle} per ${groupByTitle}`;
         $('#daily-pivot-chart-title').text(pivotTitle);
-
         try {
-            // Agregasi data menggunakan reduce
             const aggregatedData = tableData.reduce((acc, row) => {
-                const group = row[groupBy] || 'Lainnya';
+                const groupKey = row[groupBy] || 'Lainnya';
                 const value = parseFloat(row[metric]) || 0;
-                if (!acc[group]) {
-                    acc[group] = 0;
-                }
-                acc[group] += value;
+                if (!acc[groupKey]) acc[groupKey] = 0;
+                acc[groupKey] += value;
                 return acc;
             }, {});
-
-            const chartDataArray = [[groupBy, metric.replace(/_/g, ' ')]];
+            const chartDataArray = [[groupByTitle, metricTitle]];
             for (const key in aggregatedData) {
                 chartDataArray.push([key, aggregatedData[key]]);
             }
-
-            if (chartDataArray.length <= 1) throw new Error("Tidak ada data untuk diagregasi.");
-
+            if (chartDataArray.length <= 1) throw new Error("Data tidak cukup untuk agregasi.");
             const chartData = google.visualization.arrayToDataTable(chartDataArray);
             let chart;
             const options = { title: pivotTitle, height: 350, chartArea: { width: '80%', height: '70%' } };
-
             const chartContainer = document.getElementById('daily-pivot-chart');
             if (chartType === 'line') chart = new google.visualization.LineChart(chartContainer);
             else if (chartType === 'pie') chart = new google.visualization.PieChart(chartContainer);
             else chart = new google.visualization.ColumnChart(chartContainer);
-            
             chart.draw(chartData, options);
-
         } catch (e) {
             console.error("Gagal membuat pivot chart:", e);
             $('#daily-pivot-chart').html(`<div class="alert alert-warning">Gagal memuat pivot chart: ${e.message}</div>`);
         }
     }
-
-
-    
 
     
     function renderDailyDashboard(data) {
@@ -149,19 +138,6 @@ $(document).ready(function() {
         renderSuperPivotChart(data.detailed_table, pivotGroupBy.val(), pivotMetric.val(), pivotChartType.val());
 
         
-        try {
-            const metricY = pivotMetricFilter.val();
-            const metricYTitle = pivotMetricFilter.find('option:selected').text();
-            const pivotChartDataArray = [['Tanggal', metricYTitle]];
-            tableData.forEach(row => { // Gunakan tableData yang sudah diolah
-                const dateObj = moment(row['Tanggal'], "DD MMM YYYY", 'id').toDate();
-                const valueY = parseFloat(row[metricY]) || 0;
-                pivotChartDataArray.push([dateObj, valueY]);
-            });
-            const pivotChartData = google.visualization.arrayToDataTable(pivotChartDataArray);
-            new google.visualization.LineChart(document.getElementById('daily-pivot-chart')).draw(pivotChartData, { title: `${metricYTitle} vs Tanggal`, hAxis: { title: 'Tanggal', format: 'd MMM' }, vAxis: { title: metricYTitle }, legend: { position: 'none' }, pointSize: 5, series: { 0: { color: '#dc3545' } } });
-        } catch(e) { $('#daily-pivot-chart').html(`<div class="alert alert-warning">Gagal memuat pivot chart.</div>`); }
-
         // TAHAP 4: Render DataTables dengan Konfigurasi Lengkap
         if (dailyTable) dailyTable.destroy();
         
