@@ -11,76 +11,48 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="loader" class="loader-overlay">
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="mt-2">Memuat data...</p>
-    </div>
+    <div id="loader" class="loader-overlay"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Memuat...</p></div>
+    <nav class="navbar navbar-dark bg-dark sticky-top shadow-sm"><div class="container-fluid"><span class="navbar-brand fw-bold"><i class="fas fa-chart-line me-2"></i>Plantation Analytics</span></div></nav>
     
-    <nav class="navbar navbar-dark bg-dark sticky-top shadow-sm">
-        <div class="container-fluid">
-            <span class="navbar-brand fw-bold"><i class="fas fa-chart-line me-2"></i>Plantation Analytics</span>
-        </div>
-    </nav>
-    
-    <main class="container-fluid p-4">
-        <h3 class="mb-3 fw-bold">Dashboard Produksi Harian</h3>
-        <div class="card shadow-sm mb-4">
-            <div class="card-header fw-bold">Filter Data</div>
-            <div class="card-body">
-                <div class="row g-3 align-items-end" id="filter-container">
-                    <div class="col-md-4"><label class="form-label">Interval Tanggal</label><input type="text" id="date-filter" class="form-control" disabled></div>
-                    <div class="col-md-3"><label class="form-label">Kebun</label><select id="kebun-filter" class="form-select" disabled></select></div>
-                    <div class="col-md-3"><label class="form-label">Divisi</label><select id="divisi-filter" class="form-select" disabled></select></div>
-                    <div class="col-md-2"><button id="apply-filter" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan</button></div>
-                    <div class="col-12 mt-3 pt-3 border-top">
-    <div class="row align-items-end">
-        <div class="col-md-4">
-            <label class="form-label"><b>Pivot Chart:</b> Sumbu X (Horizontal)</label>
-            <select id="pivot-x" class="form-select">
-                <option value="Tanggal">Tanggal</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Sumbu Y (Vertikal)</label>
-            <select id="pivot-y" class="form-select">
-                <option value="AKP_Panen">AKP Panen</option>
-                <option value="Output_Kg_HK">Output Kg/HK</option>
-                <option value="Tonase_Panen_Kg">Tonase Panen (Kg)</option>
-                <option value="BJR_Hari_Ini">BJR Hari Ini</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <p class="form-text">Pilih metrik untuk dibandingkan. Grafik akan diperbarui saat Anda menekan tombol "Terapkan".</p>
-        </div>
-    </div>
-</div>
-                </div>
-            </div>
-        </div>
+    <div class="container-fluid p-4">
+        <ul class="nav nav-tabs mb-3" id="main-nav">
+            <li class="nav-item"><a class="nav-link active" href="#" data-view="daily">Dashboard Harian</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-view="monthly">Dashboard Bulanan</a></li>
+        </ul>
 
         <div id="alert-box" class="alert mt-4" style="display: none;"></div>
-        <div id="dashboard-content" class="row g-4" style="display: none;">
+
+        <div id="daily-view">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header fw-bold">Filter Data Harian</div>
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4"><label class="form-label">Interval Tanggal</label><input type="text" id="date-filter" class="form-control" disabled></div>
+                        <div class="col-md-3"><label class="form-label">Kebun</label><select id="kebun-filter" class="form-select" disabled></select></div>
+                        <div class="col-md-3"><label class="form-label">Divisi</label><select id="divisi-filter" class="form-select" disabled></select></div>
+                        <div class="col-md-2"><button id="apply-filter-daily" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan</button></div>
+                    </div>
+                </div>
             </div>
-    </main>
+            <div id="daily-dashboard-content" class="row g-4" style="display: none;"></div>
+        </div>
 
-    
-<a class="nav-link" href="#monthly" id="nav-monthly">Dashboard Bulanan</a>
-
-<div id="daily-view">
+        <div id="monthly-view" style="display: none;">
+            <div class="card shadow-sm mb-4">
+                 <div class="card-header fw-bold">Filter Data Bulanan</div>
+                 <div class="card-body">
+                     <div class="row g-3 align-items-end">
+                        <div class="col-md-3"><label class="form-label">Tahun</label><select id="year-filter" class="form-select"></select></div>
+                        <div class="col-md-3"><label class="form-label">Bulan</label><select id="month-filter" class="form-select"></select></div>
+                        <div class="col-md-3"><label class="form-label">Kebun</label><select id="kebun-filter-monthly" class="form-select"></select></div>
+                        <div class="col-md-3"><button id="apply-filter-monthly" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i> Terapkan</button></div>
+                     </div>
+                 </div>
+            </div>
+            <div id="monthly-dashboard-content" class="row g-4" style="display: none;"></div>
+        </div>
     </div>
 
-<div id="monthly-view" style="display:none;">
-    <h3 class="mb-3 fw-bold">Dashboard Produksi Bulanan</h3>
-    <div class="card shadow-sm mb-4">
-        <div class="card-header fw-bold">Filter Data Bulanan</div>
-        <div class="card-body">
-            </div>
-    </div>
-    <div id="monthly-dashboard-content" class="row g-4"></div>
-</div>
-
-
-    
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment/locale/id.js"></script>
