@@ -1,9 +1,6 @@
-// ===================================================================
-// === Plantation Analytics Dashboard - Final Script ===
-// ===================================================================
 $(document).ready(function() {
     // --- KONFIGURASI PENTING ---
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwVP2V-I73WqIkKaTQmWkb40Qhf_xJKjxMGEK2AqISjhG4ii-R9fvWtKgWGVgxRDk6/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIWO6vVfTIywJuPf-bPplPTNqQaT00dtEAVOqfjKPgRVw48-8KGCEKL9Nz_sZ7SxfR/exec"; // <-- GANTI DENGAN URL BARU DARI LANGKAH 1.B
 
     // --- ELEMEN UI UMUM ---
     const loader = $('#loader');
@@ -38,19 +35,17 @@ $(document).ready(function() {
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(requestBody),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Header ini penting untuk menghindari error CORS preflight
+                headers: { 'Content-Type': 'text/plain' },
                 mode: 'cors',
                 redirect: 'follow'
             });
             const data = await response.json();
-            if (data.error) {
-                throw new Error(data.error);
-            }
+            if (data.error) throw new Error(data.error);
             return data;
         } catch (error) {
             showAlert(`Error: ${error.message}`, 'danger');
             console.error('Error in postToServer:', error);
-            return null; // Kembalikan null jika ada error
+            return null;
         } finally {
             loader.hide();
         }
@@ -66,14 +61,14 @@ $(document).ready(function() {
     function renderDailyDashboard(data) {
         dailyDashboardContent.empty().hide();
         if (!data || data.isEmpty) {
-            showAlert(data ? data.message : 'Tidak ada data untuk kombinasi filter yang dipilih.', 'warning');
+            showAlert(data.message || 'Tidak ada data.', 'warning');
             return;
         }
         
         const kpiHtml = `<div class="col-lg-3 col-md-6"><div class="kpi-box"><div class="title">ACV Production</div><div class="value">${data.kpi_acv.value}</div></div></div><div class="col-lg-9 col-md-6"><div class="card master-data-card h-100"><div class="card-body row text-center align-items-center"><div class="col"><div class="title">SPH</div><div class="value">${data.master_data_display.sph}</div></div><div class="col"><div class="title">Luas TM (Ha)</div><div class="value">${data.master_data_display.luas_tm}</div></div><div class="col"><div class="title">Pokok (Pkk)</div><div class="value">${data.master_data_display.pkk}</div></div><div class="col"><div class="title">Budget Bulan Ini</div><div class="value">${parseFloat(data.master_data_display.budget_monthly).toLocaleString('id-ID')}</div></div></div></div></div>`;
         const mainChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><div id="daily-main-chart" style="height: 350px;"></div></div></div></div>`;
         const pivotChartHtml = `<div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><div id="daily-pivot-chart" style="height: 350px;"></div></div></div></div>`;
-        const tableHtml = `<div class="col-12"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title fw-bold">Detail Data Harian</h5><table id="daily-data-table" class="table table-striped table-bordered" style="width:100%"></table></div></div></div>`;
+        const tableHtml = `<div class="col-12"><div class="card shadow-sm"><div class="card-body"><h5 class="card-title fw-bold">Detail Data Harian</h5><table id="daily-data-table" class="table table-striped" style="width:100%"></table></div></div></div>`;
         
         dailyDashboardContent.html(kpiHtml + mainChartHtml + pivotChartHtml + tableHtml).show();
 
@@ -112,7 +107,7 @@ $(document).ready(function() {
     function renderMonthlyDashboard(data) {
         monthlyDashboardContent.empty().hide();
         if (!data || data.isEmpty) {
-            showAlert(data ? data.message : 'Tidak ada data.', 'warning');
+            showAlert(data.message || 'Tidak ada data.', 'warning');
             return;
         }
 
@@ -139,7 +134,6 @@ $(document).ready(function() {
             kebun: kebunFilterMonthly.val(),
             divisi: divisiFilterMonthly.val()
         };
-        // ===== INI ADALAH BARIS KUNCI YANG DIPERBAIKI =====
         const data = await postToServer({ action: 'getMonthlyData', filters: filters });
         if (data) renderMonthlyDashboard(data);
     }
@@ -161,17 +155,13 @@ $(document).ready(function() {
         mainNav.find(`[data-view="${view}"]`).addClass('active');
         alertBox.hide();
         if (view === 'daily') {
-            monthlyView.hide();
-            dailyView.show();
+            monthlyView.hide(); dailyView.show();
         } else {
-            dailyView.hide();
-            monthlyView.show();
+            dailyView.hide(); monthlyView.show();
             initializeMonthlyPage();
         }
     }
 
-    mainNav.on('click', '.nav-link', function(e) { e.preventDefault(); switchView($(this).data('view')); });
-    
     async function initializeApp() {
         showAlert('Mengambil data filter...', 'info');
         google.charts.load('current', {'packages':['corechart']});
@@ -197,7 +187,8 @@ $(document).ready(function() {
         }
     }
     
-    // Event Listeners
+    // --- EVENT LISTENERS & INISIALISASI ---
+    mainNav.on('click', '.nav-link', function(e) { e.preventDefault(); switchView($(this).data('view')); });
     applyBtnDaily.on('click', fetchAndRenderDailyData);
     applyBtnMonthly.on('click', fetchAndRenderMonthlyData);
 
