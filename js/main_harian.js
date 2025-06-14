@@ -15,6 +15,13 @@ $(document).ready(function() {
     // Inisialisasi Google Charts
     google.charts.load('current', {'packages':['corechart', 'table']});
 
+        // --- FUNGSI UTILITAS (YANG SEBELUMNYA HILANG) ---
+    function showAlert(message, type = 'info') {
+        alertBox.removeClass('alert-info alert-warning alert-success alert-danger').addClass(`alert-${type}`).text(message).show();
+    }
+
+
+    
     // --- FUNGSI RENDER ---
     function renderDashboard(data) {
         dashboardContent.empty().hide();
@@ -107,7 +114,9 @@ $(document).ready(function() {
                 ranges: {
                    'Hari Ini': [moment(), moment()], 'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                    '7 Hari Terakhir': [moment().subtract(6, 'days'), moment()], 'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
-                   'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                   'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    'Bulan Ini': [moment().startOf('month'), moment().endOf('month')]
+                    
                 }
             }, (start, end) => { startDate = start; endDate = end; });
 
