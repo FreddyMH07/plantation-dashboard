@@ -15,12 +15,13 @@ export async function postToServer(requestBody, alertBox) {
             mode: 'cors',
             redirect: 'follow'
         });
+       if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         const data = await response.json();
         if (data.error) throw new Error(data.error);
         return data;
     } catch (error) {
         const message = `Error: ${error.message}`;
-        if(alertBox) alertBox.removeClass('alert-info alert-warning').addClass('alert-danger').text(message).show();
+        if (alertBox && alertBox.length) alertBox.removeClass('alert-info alert-warning').addClass('alert-danger').text(message).show();
         console.error('Error in postToServer:', error);
         return null;
     } finally {
