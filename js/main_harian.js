@@ -119,5 +119,5 @@ $(document).ready(function() {
 
     // --- EVENT LISTENERS ---
     applyBtn.on('click', fetchData);
-    initializeApp();
+    initializePage();
 });
