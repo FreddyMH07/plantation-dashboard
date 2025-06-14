@@ -30,6 +30,19 @@ $(document).ready(function() {
             return;
         }
 
+        // TAHAP 1: Olah data mentah dari server untuk tabel
+        const tableData = data.detailed_table.map((row, index) => {
+            const budgetHarian = parseFloat(row.Budget_Harian) || 0;
+            const realisasiPKS = parseFloat(row.Timbang_PKS) || 0;
+            const acvHarian = budgetHarian > 0 ? (realisasiPKS / budgetHarian) * 100 : 0;
+            return {
+                ...row,
+                NO: index + 1,
+                ACV_Prod_Harian: acvHarian,
+                Realisasi_PKS_Harian: realisasiPKS,
+            };
+        });
+
         const kpiHtml = `
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="kpi-box"><div class="title">ACV Production</div><div class="value">${data.kpi_acv.value}</div></div>
@@ -176,9 +189,10 @@ dailyTable = $('#daily-data-table').DataTable({
                 }
             }, (start, end) => { startDate = start; endDate = end; });
 
-            $('[disabled]').prop('disabled', false);
+            $('#daily-view').find('[disabled]').prop('disabled', false);
             showAlert('Aplikasi siap. Memuat data untuk hari ini...', 'success');
-            fetchData(); // Otomatis muat data hari ini
+            
+            fetchData();
         }
     }
 
