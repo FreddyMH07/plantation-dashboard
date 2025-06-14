@@ -1,4 +1,7 @@
+// File: js/main_harian.js
 import { postToServer } from './api.js';
+import { showAlert, renderDailyDashboard } from './ui.js'; // <-- Impor fungsi dari ui.js
+
 
 $(document).ready(function() {
     // --- ELEMEN UI ---
