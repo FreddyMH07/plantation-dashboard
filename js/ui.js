@@ -1,11 +1,24 @@
 // File: js/ui.js
 // Tugas: Membangun dan memperbarui semua elemen di halaman.
+/**
+ * Menampilkan notifikasi di halaman.
+ * @param {JQuery<HTMLElement>} alertBox - Elemen JQuery dari kotak alert.
+ * @param {string} message - Pesan yang ingin ditampilkan.
+ * @param {string} type - Tipe alert (info, success, warning, danger).
+ */
 
 export function showAlert(message, type = 'info') {
     $('#alert-box').removeClass('alert-info alert-warning alert-danger').addClass(`alert-${type}`).text(message).show();
 }
 
+/**
+ * Merender seluruh konten untuk Dashboard Harian.
+ * @param {object} data - Data yang diterima dari API.
+ * @param {DataTable.Api} dailyTable - Instance DataTable yang sudah ada.
+ * @returns {DataTable.Api} - Instance DataTable yang baru.
+ */
 
+     
 // --- FUNGSI BARU UNTUK PIVOT CHART ---
 export function renderPivotChart(tableData, groupBy, metric, chartType) {
     const metricTitle = metric.replace(/_/g, ' ');
@@ -95,8 +108,8 @@ export function renderDailyDashboard(data, dailyTable) {
     }
 
     // TAHAP 4: Render DataTables dengan Konfigurasi Lengkap dan Benar
-    if (dailyTable) {
-        dailyTable.destroy();
+     if ($.fn.DataTable.isDataTable('#daily-data-table')) {
+        $('#daily-data-table').DataTable().destroy();
     }
 
     return $('#daily-data-table').DataTable({
