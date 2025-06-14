@@ -1,10 +1,13 @@
 // File: js/ui.js
 // Tugas: Membangun dan memperbarui semua elemen di halaman.
 /**
- * Menampilkan notifikasi di halaman.
- * @param {JQuery<HTMLElement>} alertBox - Elemen JQuery dari kotak alert.
- * @param {string} message - Pesan yang ingin ditampilkan.
- * @param {string} type - Tipe alert (info, success, warning, danger).
+
+/**
+ * Render Dashboard Harian (daily) secara lengkap ke container tertentu.
+ * @param {object} data - Data hasil fetch dari server.
+ * @param {JQuery<HTMLElement>} dashboardContent - Kontainer dashboard harian (misal: $('#daily-dashboard-content'))
+ * @param {DataTable.Api|null} dailyTable - Instance DataTable sebelumnya (biar bisa destroy).
+ * @returns {DataTable.Api} - Instance DataTable terbaru (return supaya bisa dipakai lagi).
  */
 
 export function showAlert(alertBox, message, type = 'info') {
@@ -23,12 +26,11 @@ export function showAlert(alertBox, message, type = 'info') {
  * @returns {DataTable.Api} - Instance DataTable yang baru.
  */
 
-export function renderDailyDashboard(data, dailyTable) {
-    const dailyDashboardContent = $('#daily-dashboard-content');
-    dailyDashboardContent.empty().hide();
+export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTable) {
+    dashboardContent.empty().hide();
 
     if (!data || data.isEmpty) {
-        showAlert(data.message || 'Tidak ada data untuk kombinasi filter yang dipilih.', 'warning');
+        showAlert(alertBox, data?.message || 'Tidak ada data untuk kombinasi filter yang dipilih.', 'warning');
         if (dailyTable) dailyTable.clear().draw();
         return;
     }
