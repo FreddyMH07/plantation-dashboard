@@ -80,7 +80,7 @@ export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTabl
             </div></div>
         </div>`;
     
-    dailyDashboardContent.html(kpiHtml + chartHtml + tableHtml).show();
+    DashboardContent.html(kpiHtml + chartHtml + tableHtml).show();
 
 
      // Render Chart
