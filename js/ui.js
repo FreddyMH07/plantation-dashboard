@@ -23,7 +23,6 @@ export function showAlert(alertBox, message, type = 'info') {
  * @returns {DataTable.Api} - Instance DataTable yang baru.
  */
 
-
 export function renderDailyDashboard(data, dailyTable) {
     const dailyDashboardContent = $('#daily-dashboard-content');
     dailyDashboardContent.empty().hide();
