@@ -25,6 +25,20 @@
     <div class="d-flex">
         <!-- SIDEBAR -->
         <div id="sidebar" class="sidebar sidebar-collapsed bg-dark text-white p-3">
+
+            <!-- Dark Mode Switch + Copyright di sidebar bawah -->
+<div class="mt-auto d-flex flex-column align-items-center pt-4 pb-2">
+    <button id="dark-mode-toggle" class="btn btn-sm btn-outline-light mb-2" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i> <span class="d-none d-md-inline">Dark Mode</span>
+    </button>
+    <small class="text-secondary text-center" style="font-size:12px;">
+        &copy; 2025 Freddy Mazmur<br>PM Sahabat Agro Group
+    </small>
+</div>
+
+
+
+            
             <a href="index.html" class="d-flex align-items-center mb-4 text-white text-decoration-none fs-4 fw-bold" style="gap:0.75rem;">
                 <i class="fas fa-leaf"></i>
                 <span class="sidebar-logo-text">Plantation</span>
@@ -137,5 +151,36 @@
             $(window).on('resize', updateSidebarState);
         });
     </script>
+
+
+
+    <script>
+    // Dark mode logic
+    function setDarkMode(on) {
+        if (on) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+    // At load: ikut preferensi OS atau simpanan lokal
+    $(function () {
+        let theme = localStorage.getItem('theme');
+        if (!theme) {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        setDarkMode(theme === 'dark');
+
+        $('#dark-mode-toggle').on('click', function () {
+            setDarkMode(!document.body.classList.contains('dark-mode'));
+        });
+    });
+</script>
+
+
+
+    
 </body>
 </html>
