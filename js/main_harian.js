@@ -1,6 +1,6 @@
 // File: js/main_harian.js
 import { postToServer } from './api.js';
-import { showAlert, renderDailyDashboard } from './ui.js'; // <-- Impor fungsi dari ui.js
+import { showAlert } from './ui.js'; // <-- Impor fungsi dari ui.js
 
 
 $(document).ready(function() {
@@ -30,6 +30,9 @@ $(document).ready(function() {
         dashboardContent.empty().hide();
         if (!data || data.isEmpty) {
             showAlert(data.message || 'Tidak ada data untuk filter ini.', 'warning');
+            if ($.fn.DataTable.isDataTable('#daily-data-table')) {
+                $('#daily-data-table').DataTable().clear().draw();
+            }
             return;
         }
 
@@ -95,6 +98,9 @@ if ($.fn.DataTable.isDataTable('#daily-data-table')) {
     $('#daily-data-table').DataTable().destroy();
 }
 
+ const columns = data.detailed_table.length > 0 ? Object.keys(data.detailed_table[0]).map(key => ({ title: key.replace(/_/g, ' '), data: key })) : [];
+        dailyTable = $('#daily-data-table').DataTable({
+            
 // Inisialisasi DataTables dengan Konfigurasi Lengkap dan Final
 dailyTable = $('#daily-data-table').DataTable({
     data: tableData, // Menggunakan data yang sudah diolah dengan kolom NO dan ACV Harian
@@ -192,9 +198,11 @@ dailyTable = $('#daily-data-table').DataTable({
                 }
             }, (start, end) => { startDate = start; endDate = end; });
 
-            $('[disabled]').find('[disabled]').prop('disabled', false);
+            // Aktifkan semua filter dan tombol di dalam view harian
+            $('#daily-view').find('[disabled]').prop('disabled', false);
             showAlert('Aplikasi siap. Memuat data untuk hari ini...', 'success');
             
+            // Otomatis muat data untuk pertama kali
             fetchData();
         }
     }
