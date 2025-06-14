@@ -189,7 +189,7 @@ dailyTable = $('#daily-data-table').DataTable({
                 }
             }, (start, end) => { startDate = start; endDate = end; });
 
-            $('#daily-view').find('[disabled]').prop('disabled', false);
+            $('[disabled]').find('[disabled]').prop('disabled', false);
             showAlert('Aplikasi siap. Memuat data untuk hari ini...', 'success');
             
             fetchData();
