@@ -147,6 +147,27 @@ body {
 
 
 
+
+
+.sidebar-footer {
+    margin-top: auto;
+}
+#dark-mode-toggle.btn-xs {
+    font-size: 0.78rem;
+    padding: 2px 10px;
+    border-radius: 0.75rem;
+}
+.sidebar-footer small {
+    color: #aaa !important;
+}
+
+
+
+
+
+
+
+
 body.dark-mode,
 .dark-mode .sidebar,
 .dark-mode .card,
