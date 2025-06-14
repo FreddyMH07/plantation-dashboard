@@ -75,16 +75,72 @@ $(document).ready(function() {
         } catch(e) { $('#daily-main-chart').html(`<div class="alert alert-warning">Gagal memuat grafik.</div>`); }
         
         // Render Tabel Data
-        if (dailyTable) dailyTable.destroy();
-        const columns = data.detailed_table.length > 0 ? Object.keys(data.detailed_table[0]).map(key => ({ title: key.replace(/_/g, ' '), data: key })) : [];
-        dailyTable = $('#daily-data-table').DataTable({
-            data: data.detailed_table,
-            columns: columns,
-            responsive: true,
-            dom: "Bfrtip",
-            buttons: ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'colvis', text: 'Pilih Kolom' }],
-            language: { url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/id.json' }
-        });
+if ($.fn.DataTable.isDataTable('#daily-data-table')) {
+    $('#daily-data-table').DataTable().destroy();
+}
+
+// Inisialisasi DataTables dengan Konfigurasi Lengkap dan Final
+dailyTable = $('#daily-data-table').DataTable({
+    data: tableData, // Menggunakan data yang sudah diolah dengan kolom NO dan ACV Harian
+    
+    // Mendefinisikan SEMUA kolom yang tersedia
+    columns: [
+        // --- Kolom yang tampil secara default ---
+        { title: 'No', data: 'NO' },
+        { title: 'Kebun', data: 'Kebun' },
+        { title: 'Budget Harian', data: 'Budget_Harian', className: 'text-end', render: $.fn.dataTable.render.number('.', ',', 0, '', ' Kg') },
+        { title: 'Realisasi PKS Harian', data: 'Realisasi_PKS_Harian', className: 'text-end fw-bold', render: $.fn.dataTable.render.number('.', ',', 0, '', ' Kg') },
+        { title: 'Refraksi (Kg)', data: 'Refraksi_Kg', className: 'text-end' },
+        { title: 'Refraksi (%)', data: 'Refraksi_Persen', className: 'text-end' },
+        { title: 'BJR Hari Ini', data: 'BJR_Hari_Ini', className: 'text-end' },
+        { title: 'ACV Prod Harian', data: 'ACV_Prod_Harian', className: 'text-end', render: function(data) { return data.toFixed(2) + ' %'; } },
+        
+        // --- Kolom lain yang tersembunyi tapi bisa dipilih user ---
+        { title: 'Tanggal', data: 'Tanggal' },
+        { title: 'Divisi', data: 'Divisi' },
+        { title: 'AKP Panen', data: 'AKP_Panen' },
+        { title: 'TK Panen', data: 'TK_Panen' },
+        { title: 'Luas Panen', data: 'Luas_Panen' },
+        { title: 'JJG Panen', data: 'JJG_Panen' },
+        { title: 'JJG Kirim', data: 'JJG_Kirim' },
+        { title: 'Ketrek', data: 'Ketrek' },
+        { title: 'Total JJG Kirim', data: 'Total_JJG_Kirim' },
+        { title: 'Tonase Panen (Kg)', data: 'Tonase_Panen_Kg' },
+        { title: 'Restant Jjg', data: 'Restant_Jjg' },
+        { title: 'Output Kg/HK', data: 'Output_Kg_HK' },
+        { title: 'Output Ha/HK', data: 'Output_Ha_HK' },
+        { title: 'Timbang Kebun', data: 'Timbang_Kebun' }
+    ],
+    
+    responsive: true,
+    dom: "Bfrtip", // Menampilkan Buttons, Filter, info, dan pagination
+    buttons: ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'colvis', text: 'Pilih Kolom' }],
+    language: { url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/id.json' },
+    
+    // Mengatur kolom mana saja yang disembunyikan secara default
+    "columnDefs": [
+        { 
+            "visible": false, 
+            "targets": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] // Sembunyikan semua kolom tambahan
+        } 
+    ],
+    
+    // Menambahkan pewarnaan interaktif per baris
+    "createdRow": function(row, data, dataIndex) {
+        // Cari sel 'ACV Prod Harian' (indeks kolom ke-7, yaitu 0,1,2,3,4,5,6,7)
+        const acvCell = $('td', row).eq(7);
+        const acvValue = parseFloat(data.ACV_Prod_Harian);
+        if (!isNaN(acvValue)) {
+            if (acvValue >= 100) {
+                acvCell.addClass('acv-good');
+            } else if (acvValue >= 80) {
+                acvCell.addClass('acv-warning');
+            } else {
+                acvCell.addClass('acv-bad');
+            }
+        }
+    }
+});
     }
 
     // --- FUNGSI PENGATUR ---
