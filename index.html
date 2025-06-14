@@ -26,23 +26,38 @@
             </ul>
         </div>
 
-        <main class="flex-grow-1 p-4" style="overflow-y: auto; height: 100vh;">
-            <h3 class="mb-3 fw-bold">Dashboard Produksi Harian</h3>
-            <div id="alert-box-daily" class="alert" style="display: none;"></div>
-            <div class="card shadow-sm mb-4">
-                <div class="card-header fw-bold">Filter Data</div>
-                <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-lg-4 col-md-6"><label class="form-label">Interval Tanggal</label><input type="text" id="date-filter-daily" class="form-control" disabled></div>
-                        <div class="col-lg-3 col-md-6"><label class="form-label">Kebun</label><select id="kebun-filter-daily" class="form-select" disabled></select></div>
-                        <div class="col-lg-3 col-md-6"><label class="form-label">Divisi</label><select id="divisi-filter-daily" class="form-select" disabled></select></div>
-                        <div class="col-lg-2 col-md-6"><button id="apply-filter-daily" class="btn btn-primary w-100" disabled><i class="fas fa-filter me-1"></i> Terapkan</button></div>
+<main class="flex-grow-1 p-4" style="overflow-y: auto; height: 100vh;">
+    <div id="daily-view">
+        <h3 class="mb-3 fw-bold">Dashboard Produksi Harian</h3>
+        <div id="alert-box-daily" class="alert" style="display: none;"></div>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header fw-bold">Filter Data</div>
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4 col-md-6">
+                        <label class="form-label">Interval Tanggal</label>
+                        <input type="text" id="date-filter-daily" class="form-control" disabled>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label">Kebun</label>
+                        <select id="kebun-filter-daily" class="form-select" disabled></select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label">Divisi</label>
+                        <select id="divisi-filter-daily" class="form-select" disabled></select>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <button id="apply-filter-daily" class="btn btn-primary w-100" disabled>
+                            <i class="fas fa-filter me-1"></i> Terapkan
+                        </button>
                     </div>
                 </div>
             </div>
-            <div id="daily-dashboard-content" class="row g-4"></div>
-        </main>
+        </div>
+        <div id="daily-dashboard-content" class="row g-4"></div>
     </div>
+</main>
+
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
