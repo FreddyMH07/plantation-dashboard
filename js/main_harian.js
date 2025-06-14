@@ -40,19 +40,27 @@ $(document).ready(function() {
         data.divisi.forEach(item => divisiFilter.append(`<option value="${item}">${item}</option>`));
 
         // Tanggal awal: hari ini
-        startDate = moment();
-        endDate = moment();
+         const now = moment();
+        const awalBulan = moment().startOf('month');
         dateFilter.daterangepicker({
-            startDate, endDate,
-            locale: { format: 'DD MMMM YYYY' },
-            ranges: {
-                'Hari Ini':        [moment(), moment()],
-                'Kemarin':         [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                '7 Hari Terakhir': [moment().subtract(6, 'days'), moment()],
-                'Bulan Ini':       [moment().startOf('month'), moment().endOf('month')],
-                'Bulan Lalu':      [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            }
+        startDate: awalBulan,
+        endDate: now,
+        locale: { format: 'DD MMMM YYYY' },
+        ranges: {
+        'Hari Ini': [now, now],
+        'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        '7 Hari Terakhir': [moment().subtract(6, 'days'), now],
+        'Bulan Ini': [awalBulan, now],
+        'Bulan Lalu': [
+            moment().subtract(1, 'month').startOf('month'),
+            moment().subtract(1, 'month').endOf('month')
+            ]
+        }
         }, (start, end) => { startDate = start; endDate = end; });
+
+        startDate = awalBulan;
+        endDate = now;
+
 
         // Aktifkan filter & tombol
         $('#daily-view').find('[disabled]').prop('disabled', false);
