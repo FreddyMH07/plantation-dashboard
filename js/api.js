@@ -1,12 +1,12 @@
 // File: js/api.js
 // Tugas: Hanya untuk berbicara dengan Google Apps Script API.
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYvY2AAijGgxs6c0Nm9179T-8c5VHfYNN3J5kbqIpAowFTUJLk2WmE6tm884N0QFMu/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIWO6vVfTIywJuPf-bPplPTNqQaT00dtEAVOqfjKPgRVw48-8KGCEKL9Nz_sZ7SxfR/exec";
 const loader = $('#loader');
 
-export async function postToServer(requestBody) {
+export async function postToServer(requestBody, alertBox) {
     loader.show();
-    $('#alert-box').hide();
+    if(alertBox) alertBox.hide();
     try {
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
@@ -19,7 +19,8 @@ export async function postToServer(requestBody) {
         if (data.error) throw new Error(data.error);
         return data;
     } catch (error) {
-        $('#alert-box').removeClass('alert-info alert-warning alert-danger').addClass('alert-danger').text(`Error: ${error.message}`).show();
+        const message = `Error: ${error.message}`;
+        if(alertBox) alertBox.removeClass('alert-info alert-warning').addClass('alert-danger').text(message).show();
         console.error('Error in postToServer:', error);
         return null;
     } finally {
