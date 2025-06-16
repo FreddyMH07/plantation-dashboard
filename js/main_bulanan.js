@@ -69,6 +69,7 @@ $(document).ready(function() {
         const initialData = await postToServer({ action: 'getInitialData' }, alertBox);
         if (initialData) {
             initialData.kebun.forEach(item => kebunFilter.append(`<option value="${item}">${item}</option>`));
+            divisiFilter.empty().append('<option value="">(Semua Divisi)</option>');
             initialData.divisi.forEach(item => divisiFilter.append(`<option value="${item}">${item}</option>`)); 
             const currentYear = new Date().getFullYear();
             for (let i = currentYear; i >= currentYear - 5; i--) { yearFilter.append($('<option>', { value: i, text: i })); }
