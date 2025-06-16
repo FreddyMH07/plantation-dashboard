@@ -17,6 +17,17 @@ $(document).ready(function() {
     if (!localStorage.getItem('isLogin')) {
   window.location.href = "login.html";
 }
+
+    //--Untuk Logout --
+    $(document).ready(function () {
+  $('#logout-btn').on('click', function () {
+    localStorage.removeItem('isLogin');
+    localStorage.removeItem('username');
+    localStorage.removeItem('nama');
+    localStorage.removeItem('role');
+    window.location.replace("login.html");
+  });
+});
     
     // --- FUNGSI RENDER ---
     function renderDashboard(data) {
