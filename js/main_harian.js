@@ -3,7 +3,7 @@
 import { postToServer } from './api.js';
 import { showAlert, renderDailyDashboard } from './ui.js';
 
-    //--Untuk Login --
+ //--Untuk Login --
     if (!localStorage.getItem('isLogin')) {
   window.location.href = "login.html";
 }
@@ -16,8 +16,13 @@ import { showAlert, renderDailyDashboard } from './ui.js';
     localStorage.removeItem('nama');
     localStorage.removeItem('role');
     window.location.replace("login.html");
+
+
+    //--Untuk Kembali Ke Halaman Login --
+    // Redirect ke halaman login
+    window.location.replace("login.html"); // pakai replace biar tidak bisa back ke dashboard
   });
-});
+}); 
 
 
 $(document).ready(function() {
