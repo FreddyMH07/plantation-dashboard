@@ -72,7 +72,7 @@ $(document).ready(function () {
                 let budget = safeNum(data[0].Budget_Bulanan || 1);
                 return sum(data.map(row => row.Timbang_PKS)) / budget * 100;
             case 'Refraksi_Bulanan':
-                return sum(data.map(row => row.Refraksi_Kg)) / sum(data.map(row => row.Tonase_Panen_Kg));
+                return sum(data.map(row => row.Refraksi_Kg));
             case 'BJR_Bulanan':
                 return sum(data.map(row => row.Timbang_Kebun)) / sum(data.map(row => row.JJG_Panen));
             case 'Deviasi_Budget':
