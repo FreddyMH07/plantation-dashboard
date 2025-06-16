@@ -8,6 +8,8 @@ $(document).ready(function() {
     const kebunFilter = $('#kebun-filter-monthly');
     const applyBtn = $('#apply-filter-monthly');
     const dashboardContent = $('#monthly-dashboard-content');
+    const divisiFilter = $('#divisi-filter-monthly');
+
     let monthlyTable;
 
     google.charts.load('current', {'packages':['corechart']});
@@ -56,7 +58,7 @@ $(document).ready(function() {
 
     // --- FUNGSI PENGATUR ---
     async function fetchData() {
-        const filters = { year: yearFilter.val(), month: monthFilter.val(), kebun: kebunFilter.val(), divisi: 'SEMUA DIVISI' };
+        const filters = { year: yearFilter.val(), month: monthFilter.val(), kebun: kebunFilter.val(), divisi:  divisi: divisiFilter.val()};
         const data = await postToServer({ action: 'getMonthlyData', filters: filters }, alertBox);
         if (data) {
             renderDashboard(data);
@@ -67,6 +69,7 @@ $(document).ready(function() {
         const initialData = await postToServer({ action: 'getInitialData' }, alertBox);
         if (initialData) {
             initialData.kebun.forEach(item => kebunFilter.append(`<option value="${item}">${item}</option>`));
+            initialData.divisi.forEach(item => divisiFilter.append(`<option value="${item}">${item}</option>`)); 
             const currentYear = new Date().getFullYear();
             for (let i = currentYear; i >= currentYear - 5; i--) { yearFilter.append($('<option>', { value: i, text: i })); }
             for (let i = 1; i <= 12; i++) { monthFilter.append($('<option>', { value: i, text: moment.months(i - 1) })); }
