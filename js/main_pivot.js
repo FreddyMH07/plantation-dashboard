@@ -21,6 +21,19 @@ $(document).ready(function() {
   window.location.href = "login.html";
 }
 
+    //--Untuk Logout --
+    $(document).ready(function () {
+  $('#logout-btn').on('click', function () {
+    localStorage.removeItem('isLogin');
+    localStorage.removeItem('username');
+    localStorage.removeItem('nama');
+    localStorage.removeItem('role');
+    window.location.replace("login.html");
+  });
+});
+
+
+
     
     // --- FUNGSI RENDER ---
     function renderChart(data, groupBy, metric, chartType) {
