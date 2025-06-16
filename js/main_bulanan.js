@@ -158,16 +158,23 @@ $(document).ready(function () {
         google.charts.setOnLoadCallback(drawChart);
     }
 
-    // DataTables: summary_table
-    if (monthlyTable) monthlyTable.destroy();
-    const columns = data.summary_table.length > 0 ? Object.keys(data.summary_table[0]).map(key => ({ title: key.replace(/_/g, ' '), data: key })) : [];
-    monthlyTable = $('#monthly-data-table').DataTable({
-        data: data.summary_table,
-        columns: columns,
-        responsive: true,
-        dom: "Bfrtip",
-        buttons: ['excel', 'pdf', 'print']
-    });
+// DataTables: summary_table
+if (monthlyTable) monthlyTable.destroy();
+const columns = data.summary_table.length > 0 ? Object.keys(data.summary_table[0]).map(key => ({
+    title: key.replace(/_/g, ' '), data: key
+})) : [];
+monthlyTable = $('#monthly-data-table').DataTable({
+    data: data.summary_table,
+    columns: columns,
+    responsive: true,
+    dom: "Bfrtip", // tombol2 export
+    buttons: [
+        'copy', 'csv', 'excel', 'pdf', 'print',
+        { extend: 'colvis', text: 'Pilih Kolom' }
+    ],
+    language: { url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/id.json' }
+});
+
 }
     
     // --- FETCH DATA ---
