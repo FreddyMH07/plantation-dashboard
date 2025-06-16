@@ -26,8 +26,13 @@ $(document).ready(function() {
     localStorage.removeItem('nama');
     localStorage.removeItem('role');
     window.location.replace("login.html");
+
+
+    //--Untuk Kembali Ke Halaman Login --
+    // Redirect ke halaman login
+    window.location.replace("login.html"); // pakai replace biar tidak bisa back ke dashboard
   });
-});
+}); 
     
     // --- FUNGSI RENDER ---
     function renderDashboard(data) {
