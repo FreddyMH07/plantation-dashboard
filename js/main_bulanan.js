@@ -47,6 +47,7 @@ $(document).ready(function () {
             // Default metric (Tonase PKS)
             metricSelect.val('Tonase_PKS');
             chartTypeSelect.val('bar');
+            fetchData(); // <-- ini biar auto load!
         }
     }
 
@@ -129,34 +130,43 @@ $(document).ready(function () {
 
         dashboardContent.html(kpiHtml + '<div class="mb-4"></div>' + '<div id="monthly-chart-div"></div>' + tableHtml).show();
 
-        // CHART: perbandingan metrik
+          // Render CHART pakai function terpisah
+    function drawChart() {
         try {
             const metric = metricSelect.val();
             const val = kpi[metric];
             const chartType = chartTypeSelect.val();
-            // Bar/Pie/Line (single value, tapi pakai bar chart atau pie chart)
             const chartDataArr = [[ 'Label', metricSelect.find(':selected').text() ], [ 'Nilai', val ]];
             const chartData = google.visualization.arrayToDataTable(chartDataArr);
             let chart;
             const opts = { height: 350, title: `Perbandingan ${metricSelect.find(':selected').text()}` };
-            if (chartType === 'pie')      chart = new google.visualization.PieChart(chartContainer[0]);
-            else if (chartType === 'line')chart = new google.visualization.LineChart(chartContainer[0]);
-            else                          chart = new google.visualization.ColumnChart(chartContainer[0]);
+            if (chartType === 'pie')      chart = new google.visualization.PieChart($('#monthly-chart-div')[0]);
+            else if (chartType === 'line')chart = new google.visualization.LineChart($('#monthly-chart-div')[0]);
+            else                          chart = new google.visualization.ColumnChart($('#monthly-chart-div')[0]);
             chart.draw(chartData, opts);
-        } catch(e) { chartContainer.html(`<div class="alert alert-warning">Gagal memuat grafik.</div>`); }
-
-        // DataTables: summary_table
-        if (monthlyTable) monthlyTable.destroy();
-        const columns = data.summary_table.length > 0 ? Object.keys(data.summary_table[0]).map(key => ({ title: key.replace(/_/g, ' '), data: key })) : [];
-        monthlyTable = $('#monthly-data-table').DataTable({
-            data: data.summary_table,
-            columns: columns,
-            responsive: true,
-            dom: "Bfrtip",
-            buttons: ['excel', 'pdf', 'print']
-        });
+        } catch(e) {
+            $('#monthly-chart-div').html(`<div class="alert alert-warning">Gagal memuat grafik.</div>`);
+        }
     }
 
+    if (typeof google.visualization !== 'undefined') {
+        drawChart();
+    } else {
+        google.charts.setOnLoadCallback(drawChart);
+    }
+
+    // DataTables: summary_table
+    if (monthlyTable) monthlyTable.destroy();
+    const columns = data.summary_table.length > 0 ? Object.keys(data.summary_table[0]).map(key => ({ title: key.replace(/_/g, ' '), data: key })) : [];
+    monthlyTable = $('#monthly-data-table').DataTable({
+        data: data.summary_table,
+        columns: columns,
+        responsive: true,
+        dom: "Bfrtip",
+        buttons: ['excel', 'pdf', 'print']
+    });
+}
+    
     // --- FETCH DATA ---
     async function fetchData() {
         // PT SAG: if dipilih, treat as empty (artinya all)
