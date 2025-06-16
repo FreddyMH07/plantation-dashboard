@@ -10,10 +10,24 @@
     body { background: #f4f9f4; min-height: 100vh; display:flex; align-items:center; justify-content:center;}
     .login-box { background:#fff; padding:2.5rem 2rem; border-radius:1.2rem; box-shadow:0 4px 24px rgba(56,176,0,0.08);}
     .login-title { color:#1a8f3a; font-weight:700;}
+    .brand-logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; }
+    .brand-logo-img { height: 54px; width: auto; margin-bottom: 0.5rem;}
+    .brand-title { color: #1a8f3a; font-size:1.07rem; font-weight: 700; text-align: center; letter-spacing: 0.02em;}
+    @media (max-width: 500px) {
+      .login-box { padding:1.3rem 0.6rem; }
+      .brand-logo-img { height: 40px; }
+      .brand-title { font-size: 0.98rem;}
+    }
   </style>
 </head>
 <body>
   <div class="login-box w-100" style="max-width:370px;">
+   
+    <!-- LOGO + NAMA PT -->
+    <div class="brand-logo-wrap">
+      <img src="assets/logo-PTSAG.png.png" alt="Logo SAG" class="brand-logo-img">
+      <span class="brand-title">PT Sahabat Agro Group</span>
+    </div>
     <h4 class="mb-4 login-title text-center">Login Plantation</h4>
     <div id="login-alert" class="alert alert-danger d-none" role="alert"></div>
     <form id="login-form" autocomplete="off">
