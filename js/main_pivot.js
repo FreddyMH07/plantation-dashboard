@@ -16,10 +16,26 @@ $(document).ready(function() {
     google.charts.load('current', {'packages':['corechart']});
 
 
-    //--Untuk Login --
+ //--Untuk Login --
     if (!localStorage.getItem('isLogin')) {
   window.location.href = "login.html";
 }
+
+    //--Untuk Logout --
+    $(document).ready(function () {
+  $('#logout-btn').on('click', function () {
+    localStorage.removeItem('isLogin');
+    localStorage.removeItem('username');
+    localStorage.removeItem('nama');
+    localStorage.removeItem('role');
+    window.location.replace("login.html");
+
+
+    //--Untuk Kembali Ke Halaman Login --
+    // Redirect ke halaman login
+    window.location.replace("login.html"); // pakai replace biar tidak bisa back ke dashboard
+  });
+}); 
 
     //--Untuk Logout --
     $(document).ready(function () {
