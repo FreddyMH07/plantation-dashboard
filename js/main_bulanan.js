@@ -52,38 +52,41 @@ $(document).ready(function () {
     }
 
     // --- HITUNG METRIK (SESUAI PILIHAN USER) ---
-    function calculateMetric(data, metric) {
-        const sum = arr => arr.reduce((a,b)=>a+safeNum(b),0);
-        if (!data || data.length === 0) return 0;
-        switch(metric) {
-            case 'Tonase_PKS':
-                return sum(data.map(row => row.Timbang_PKS));
-            case 'Tonase_Kebun':
-                return sum(data.map(row => row.Timbang_Kebun));
-            case 'Selisih_Tonase':
-                return sum(data.map(row => row.Timbang_PKS)) - sum(data.map(row => row.Timbang_Kebun));
-            case 'Output_Ha':
-                return sum(data.map(row => row.Output_Kg_HK)); 
-            case 'Output_HK':
-                return sum(data.map(row => row.Output_Ha_HK));
-            case 'AKP_Bulanan':
-                return sum(data.map(row => row.AKP_Panen));
-            case 'ACV_Produksi':
-                let budget = safeNum(data[0].Budget_Bulanan || 1);
-                return sum(data.map(row => row.Timbang_PKS)) / budget * 100;
-            case 'Refraksi_Bulanan':
-                return sum(data.map(row => row.Refraksi_Kg));
-            case 'BJR_Bulanan':
-                return sum(data.map(row => row.Timbang_Kebun)) / sum(data.map(row => row.JJG_Panen));
-            case 'Deviasi_Budget':
-                let rls = sum(data.map(row => row.Timbang_PKS));
-                let bdg = safeNum(data[0].Budget_Bulanan || 1);
-                return (rls-bdg)/bdg*100;
-            case 'Restan_Bulanan':
-                return sum(data.map(row => row.Restan_Jjg));
-            default: return 0;
-        }
+   function calculateMetric(data, metric) {
+    const sum = arr => arr.reduce((a, b) => a + safeNum(b), 0);
+    const safeDiv = (num, den) => (den && isFinite(num) && isFinite(den)) ? (num / den) : 0;
+    if (!data || data.length === 0) return 0;
+    switch(metric) {
+        case 'Tonase_PKS':
+            return sum(data.map(row => row.Timbang_PKS));
+        case 'Tonase_Kebun':
+            return sum(data.map(row => row.Timbang_Kebun));
+        case 'Selisih_Tonase':
+            return sum(data.map(row => row.Timbang_PKS)) - sum(data.map(row => row.Timbang_Kebun));
+        case 'Output_Ha':
+            return safeDiv(sum(data.map(row => row.Tonase_Panen_Kg)), sum(data.map(row => row.Luas_Panen)));
+        case 'Output_HK':
+            return safeDiv(sum(data.map(row => row.Tonase_Panen_Kg)), sum(data.map(row => row.TK_Panen)));
+        case 'AKP_Bulanan':
+            let sph = safeNum(data[0]?.SPH_Panen || 1);
+            return safeDiv(sum(data.map(row => row.JJG_Panen)), sum(data.map(row => row.Luas_Panen)) * sph);
+        case 'ACV_Produksi':
+            let budget = safeNum(data[0]?.Budget_Bulanan || 0);
+            return budget > 0 ? (sum(data.map(row => row.Timbang_PKS)) / budget * 100) : 0;
+        case 'Refraksi_Bulanan':
+            return safeDiv(sum(data.map(row => row.Refraksi_Kg)), sum(data.map(row => row.Tonase_Panen_Kg)));
+        case 'BJR_Bulanan':
+            return safeDiv(sum(data.map(row => row.Timbang_Kebun)), sum(data.map(row => row.JJG_Panen)));
+        case 'Deviasi_Budget':
+            let rls = sum(data.map(row => row.Timbang_PKS));
+            let bdg = safeNum(data[0]?.Budget_Bulanan || 0);
+            return bdg > 0 ? ((rls-bdg)/bdg*100) : 0;
+        case 'Restan_Bulanan':
+            return sum(data.map(row => row.Restan_Jjg));
+        default: return 0;
     }
+}
+
     function safeNum(x) { return typeof x === "number" ? x : (Number(String(x).replace(/[^0-9.-]/g,''))||0); }
 
     // --- RENDER DASHBOARD ---
