@@ -58,7 +58,7 @@ $(document).ready(function() {
 
     // --- FUNGSI PENGATUR ---
     async function fetchData() {
-        const filters = { year: yearFilter.val(), month: monthFilter.val(), kebun: kebunFilter.val(), divisi:  divisi: divisiFilter.val()};
+        const filters = { year: yearFilter.val(), month: monthFilter.val(), kebun: kebunFilter.val(), divisi: divisiFilter.val()};
         const data = await postToServer({ action: 'getMonthlyData', filters: filters }, alertBox);
         if (data) {
             renderDashboard(data);
