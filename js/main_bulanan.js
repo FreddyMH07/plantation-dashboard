@@ -12,6 +12,12 @@ $(document).ready(function() {
 
     google.charts.load('current', {'packages':['corechart']});
 
+
+    //--Untuk Login --
+    if (!localStorage.getItem('isLogin')) {
+  window.location.href = "login.html";
+}
+    
     // --- FUNGSI RENDER ---
     function renderDashboard(data) {
         dashboardContent.empty().hide();
