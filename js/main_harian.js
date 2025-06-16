@@ -3,6 +3,13 @@
 import { postToServer } from './api.js';
 import { showAlert, renderDailyDashboard } from './ui.js';
 
+//--Untuk Login --
+if (!localStorage.getItem('isLogin')) {
+  window.location.href = "login.html";
+}
+
+
+
 $(document).ready(function() {
     // --- Variabel Elemen UI ---
     const loader           = $('#loader'); // Loader/spinner (optional)
