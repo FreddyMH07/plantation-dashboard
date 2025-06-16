@@ -3,11 +3,21 @@
 import { postToServer } from './api.js';
 import { showAlert, renderDailyDashboard } from './ui.js';
 
-//--Untuk Login --
-if (!localStorage.getItem('isLogin')) {
+    //--Untuk Login --
+    if (!localStorage.getItem('isLogin')) {
   window.location.href = "login.html";
 }
 
+    //--Untuk Logout --
+    $(document).ready(function () {
+  $('#logout-btn').on('click', function () {
+    localStorage.removeItem('isLogin');
+    localStorage.removeItem('username');
+    localStorage.removeItem('nama');
+    localStorage.removeItem('role');
+    window.location.replace("login.html");
+  });
+});
 
 
 $(document).ready(function() {
