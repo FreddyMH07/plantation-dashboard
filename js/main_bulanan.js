@@ -63,11 +63,11 @@ $(document).ready(function () {
             case 'Selisih_Tonase':
                 return sum(data.map(row => row.Timbang_PKS)) - sum(data.map(row => row.Timbang_Kebun));
             case 'Output_Ha':
-                return sum(data.map(row => row.Tonase_Panen_Kg)) / sum(data.map(row => row.Luas_Panen));
+                return sum(data.map(row => row.Output_Kg_HK)); 
             case 'Output_HK':
-                return sum(data.map(row => row.Tonase_Panen_Kg)) / sum(data.map(row => row.TK_Panen));
+                return sum(data.map(row => row.Output_Ha_HK));
             case 'AKP_Bulanan':
-                return sum(data.map(row => row.JJG_Panen)) / (sum(data.map(row => row.Luas_Panen)) * safeNum(data[0].SPH_Panen || 1));
+                return sum(data.map(row => row.AKP_Panen));
             case 'ACV_Produksi':
                 let budget = safeNum(data[0].Budget_Bulanan || 1);
                 return sum(data.map(row => row.Timbang_PKS)) / budget * 100;
