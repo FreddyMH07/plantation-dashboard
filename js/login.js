@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('login-form');
     const alertBox = document.getElementById('login-alert');
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbyJMDfaAPZkaqJDcdxniv6jOV6gz6Cb2vTsaogYE9oPjdyQSAHhNSrU0OyjHgckV3CG1Q/exec'; // Ganti sesuai Web App Script kamu
+    const apiUrl = 'https://script.google.com/macros/s/AKfycby8TllBgSIGOYiFl4YOvfbhSXOY6TQm-bFzOAx536-5B5-g9Ez4Zrvo99-Z1_i6Xnlrpg/exec'; // Ganti sesuai Web App Script kamu
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const resp = await fetch(apiUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify({
                     action: "login",
                     username: username,
