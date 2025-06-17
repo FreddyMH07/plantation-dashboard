@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
         alertBox.style.display = 'none';
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
+        const urlParams = new URLSearchParams(window.location.search);
+        const nextPage = urlParams.get('next') || 'produksi.html';
 
         // Simple loader (optional)
         form.querySelector('button[type="submit"]').disabled = true;
@@ -32,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('nama', data.nama);
                 localStorage.setItem('role', data.role);
                 // Redirect ke dashboard/menu utama
-                window.location.href = "produksi.html";
+                window.location.replace(nextPage);
             } else {
                 alertBox.textContent = data.message || "Login gagal!";
                 alertBox.style.display = 'block';
