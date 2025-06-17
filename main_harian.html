@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Harian - Plantation Analytics</title>
-    <!-- Google Fonts -->
+    <!-- Google Fonts, Bootstrap, FontAwesome, DataTables, Daterangepicker -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap, FontAwesome, DataTables, Daterangepicker -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -14,33 +13,29 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+    <!-- Loader -->
+    <div id="loader" class="loader-overlay" style="display: none;"><div class="spinner-border text-primary"></div></div>
+
+    <!-- TOPBAR -->
+    <div id="dashboard-topbar" class="d-flex justify-content-between align-items-center bg-white px-3 shadow-sm"
+        style="height:56px; position:sticky;top:0;z-index:1100;">
+        <div class="d-flex align-items-center">
+            <img src="assets/logo-PTSAG.png.png" alt="Logo SAG" style="height:34px; width:auto; margin-right:10px;">
+            <span class="fw-bold" style="color:#1a8f3a; font-size:1.1rem;">PT Sahabat Agro Group</span>
+        </div>
+        <button id="logout-btn" class="btn btn-outline-danger btn-sm">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+
     <!-- Hamburger (mobile) -->
     <button id="sidebar-toggle" class="btn btn-outline-primary d-lg-none" style="position:fixed;top:1rem;left:1rem;z-index:2000;">
         <i class="fas fa-bars"></i>
     </button>
 
-     <!-- LOGOUT BUTTON TOPBAR dan Logo  -->
-<div id="dashboard-topbar" class="d-flex justify-content-between align-items-center bg-white px-3 shadow-sm"
-     style="height:56px; position:sticky;top:0;z-index:1100;">
-    <div class="d-flex align-items-center">
-        <img src="assets/logo-PTSAG.png.png" alt="Logo SAG" style="height:34px; width:auto; margin-right:10px;">
-        <span class="fw-bold" style="color:#1a8f3a; font-size:1.1rem;">PT Sahabat Agro Group</span>
-    </div>
-    <button id="logout-btn" class="btn btn-outline-danger btn-sm">
-        <i class="fas fa-sign-out-alt"></i> Logout
-    </button>
-</div>
-
-
-    <!-- Loader -->
-    <div id="loader" class="loader-overlay" style="display: none;"><div class="spinner-border text-primary"></div></div>
-
     <div class="d-flex">
         <!-- SIDEBAR -->
         <div id="sidebar" class="sidebar sidebar-collapsed bg-dark text-white p-3">
-
-            
             <a href="index.html" class="d-flex align-items-center mb-4 text-white text-decoration-none fs-4 fw-bold" style="gap:0.75rem;">
                 <i class="fas fa-leaf"></i>
                 <span class="sidebar-logo-text">Plantation</span>
@@ -65,22 +60,17 @@
                     </a>
                 </li>
             </ul>
-
-
-            <!-- Footer: copyright + dark mode, POSISI PALING BAWAH -->
-    <div class="sidebar-footer mt-auto w-100 d-flex flex-column align-items-center pb-3 pt-4">
-        <small class="text-secondary text-center mb-2" style="font-size:12px;">
-            &copy; 2025 Freddy Mazmur<br>PM Sahabat Agro Group
-        </small>
-        <button id="dark-mode-toggle" class="btn btn-xs btn-outline-light" style="font-size: 0.75rem; padding: 3px 12px;" title="Toggle Dark Mode">
-            <i class="fas fa-moon"></i>
-            <span class="d-none d-md-inline">Dark Mode</span>
-        </button>
-    </div>
-</div>
-
-            
-    
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer mt-auto w-100 d-flex flex-column align-items-center pb-3 pt-4">
+                <small class="text-secondary text-center mb-2" style="font-size:12px;">
+                    &copy; 2025 Freddy Mazmur<br>PM Sahabat Agro Group
+                </small>
+                <button id="dark-mode-toggle" class="btn btn-xs btn-outline-light" style="font-size: 0.75rem; padding: 3px 12px;" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                    <span class="d-none d-md-inline">Dark Mode</span>
+                </button>
+            </div>
+        </div>
 
         <!-- MAIN CONTENT -->
         <main class="flex-grow-1 p-4" style="overflow-y: auto; height: 100vh;">
@@ -111,6 +101,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Dashboard Harian akan di-render di sini -->
                 <div id="daily-dashboard-content" class="row g-4"></div>
             </div>
         </main>
@@ -122,14 +113,9 @@
     <script src="https://cdn.jsdelivr.net/npm/moment/locale/id.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <!-- Google Charts -->
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <!-- DataTables -->
     <script src="https://cdn.datatables.net/v/bs5/dt-2.0.8/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/datatables.min.js"></script>
-    <!-- MAIN JS -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- JS utama -->
     <script type="module" src="js/main_harian.js"></script>
     
     <script>
