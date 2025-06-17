@@ -122,13 +122,16 @@
     <script src="https://cdn.jsdelivr.net/npm/moment/locale/id.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <!-- Google Charts -->
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <!-- DataTables -->
     <script src="https://cdn.datatables.net/v/bs5/dt-2.0.8/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/datatables.min.js"></script>
     <!-- MAIN JS -->
     <script type="module" src="js/main_harian.js"></script>
+    
     <script>
         // Sidebar expand/collapse logic
         $(document).ready(function () {
@@ -194,6 +197,21 @@
             setDarkMode(!document.body.classList.contains('dark-mode'));
         });
     });
+
+
+
+            // Logout
+    $(function(){
+        $('#logout-btn').on('click', function () {
+            localStorage.removeItem('isLogin');
+            localStorage.removeItem('username');
+            localStorage.removeItem('nama');
+            localStorage.removeItem('role');
+            window.location.replace("login.html");
+        });
+    });
+
+        
 </script>
 
 
