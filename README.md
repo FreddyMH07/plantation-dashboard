@@ -134,4 +134,4 @@ Semua dashboard sudah support login dengan Google Apps Script sebagai backend AP
 
 ---
 
-**Kalau file README.md mau dipoles atau dikasih diagram alir, bisa banget, bilang aja!**
+
