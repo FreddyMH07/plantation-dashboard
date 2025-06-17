@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('nama', data.nama);
                 localStorage.setItem('role', data.role);
                 // Redirect ke dashboard/menu utama
-                window.location.href = "dashboard_harian.html";
+                window.location.href = "produksi.html";
             } else {
                 alertBox.textContent = data.message || "Login gagal!";
                 alertBox.style.display = 'block';
