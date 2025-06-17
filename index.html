@@ -1,47 +1,67 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plantation Analytics – PT Sahabat Agro Group</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body { background: #f4f9f4; font-family: 'Inter', sans-serif; }
-        .main-box { max-width: 440px; margin: 60px auto; background: #fff; border-radius: 1.2rem; box-shadow: 0 4px 24px rgba(56,176,0,0.09); padding:2.5rem 2rem;}
-        .brand { color:#1a8f3a;font-weight:700;font-size:1.05rem;}
-        .logo-sag { height:40px; width:auto; margin-right:10px;}
-        .dashboard-link { font-size: 1.12rem; font-weight: 500; }
-        .dashboard-link i { color: #17a84a; margin-right:6px; }
-        .copyright { font-size:13px; color:#888; }
-        .btn-dashboard { border-radius:1.8rem;}
-    </style>
+  <meta charset="UTF-8">
+  <title>Portal Karyawan | PT Sahabat Agro Group</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f5f8fa; min-height: 100vh; }
+    .main-box { max-width: 430px; margin: 0 auto; padding-top: 48px;}
+    .menu-card {
+      border-radius: 1.1rem;
+      box-shadow: 0 3px 24px rgba(24,160,77,0.05);
+      transition: transform 0.11s cubic-bezier(.22,1,.36,1), box-shadow 0.18s;
+      text-align: center;
+      background: #fff;
+      cursor: pointer;
+      margin-bottom: 1.3rem;
+    }
+    .menu-card:hover { transform: translateY(-4px) scale(1.028); box-shadow: 0 6px 32px rgba(24,160,77,0.14);}
+    .menu-card .icon { font-size: 2.7rem; color: #1a8f3a; margin-bottom: 8px;}
+    .menu-card .menu-title { font-size: 1.23rem; font-weight: 600; color: #1a8f3a; }
+    .menu-card .desc { font-size: 0.93rem; color: #5c6a73; }
+    .header-row {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-bottom: 1.7rem;
+    }
+    .header-row img { height: 38px;}
+    .footer {
+      font-size: 12px; color: #98a6ad; text-align: center; margin-top: 2.7rem; letter-spacing: 0.01em;
+    }
+    @media (max-width: 576px) {
+      .main-box { padding: 0.7rem; }
+      .header-row img { height: 32px;}
+    }
+  </style>
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 </head>
 <body>
-    <div class="main-box text-center">
-        <div class="mb-4 d-flex justify-content-center align-items-center">
-            <img src="assets/logo-PTSAG.png.png" alt="Logo SAG" class="logo-sag">
-            <span class="brand">PT Sahabat Agro Group</span>
-        </div>
-        <h3 class="mb-2">Plantation Analytics</h3>
-        <p class="mb-4">Pilih dashboard yang ingin diakses:</p>
-
-        <div class="d-grid gap-3 mb-4">
-            <a href="dashboard_harian.html" class="btn btn-success btn-dashboard dashboard-link">
-                <i class="fas fa-tachometer-alt"></i> Dashboard Harian
-            </a>
-            <a href="dashboard_bulanan.html" class="btn btn-primary btn-dashboard dashboard-link">
-                <i class="fas fa-calendar-alt"></i> Dashboard Bulanan
-            </a>
-            <a href="dashboard_pivot.html" class="btn btn-warning btn-dashboard dashboard-link text-dark">
-                <i class="fas fa-chart-pie"></i> Analisis Pivot
-            </a>
-        </div>
-        <div class="copyright mt-3">
-            &copy; 2025 Freddy Mazmur<br>PM Sahabat Agro Group
-        </div>
+  <div class="main-box">
+    <div class="header-row">
+      <img src="assets/logo-PTSAG.png.png" alt="Logo SAG">
+      <span class="fw-bold" style="color:#1a8f3a;font-size:1.08rem;">PT Sahabat Agro Group</span>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+    <h3 class="text-center mb-4" style="color:#1a8f3a;">Portal Karyawan</h3>
+    <div class="menu-card p-4" onclick="location.href='dashboard_produksi.html'">
+      <div class="icon"><i class="fas fa-seedling"></i></div>
+      <div class="menu-title">Produksi Panen</div>
+      <div class="desc">Dashboard Harian, Bulanan, dan Analisis Produksi.</div>
+    </div>
+    <div class="menu-card p-4" onclick="location.href='#'">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <div class="menu-title">HR / SDM</div>
+      <div class="desc">Manajemen absensi, cuti, data karyawan.<br><span class="badge bg-secondary">Segera Hadir</span></div>
+    </div>
+    <div class="menu-card p-4" onclick="location.href='#'">
+      <div class="icon"><i class="fas fa-briefcase"></i></div>
+      <div class="menu-title">Umum</div>
+      <div class="desc">Fitur umum & layanan internal.<br><span class="badge bg-secondary">Segera Hadir</span></div>
+    </div>
+    <div class="footer">
+      &copy; 2025 Freddy Mazmur, PM PT Sahabat Agro Group
+    </div>
+  </div>
 </body>
 </html>
