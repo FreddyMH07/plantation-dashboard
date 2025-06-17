@@ -1,37 +1,46 @@
-import { postToServer } from './api.js';
+// js/login.js
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('login-form');
+    const alertBox = document.getElementById('login-alert');
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbxs-RYvGygOqZ5tTnpWh5sgToQ_6kZov4909UeiHFFYgdCT1X2EI7dKuD8dsJ23uHFKOg/exec'; // Ganti sesuai Web App Script kamu
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxWSW8Phxl1ZPltuwfYnj0I0GLZ5TfXiHSy7Bl07gNrM6AzTcCqLDDv3PdbKk_zQv18/exec"; // Ganti jika beda
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        alertBox.style.display = 'none';
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
 
-$(document).ready(function() {
-  const form = $('#login-form');
-  const alertBox = $('#login-alert');
+        // Simple loader (optional)
+        form.querySelector('button[type="submit"]').disabled = true;
 
-  form.on('submit', async function(e) {
-    e.preventDefault();
-    alertBox.addClass('d-none');
-    const username = $('#username').val().trim();
-    const password = $('#password').val().trim();
+        try {
+            const resp = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: "login",
+                    username: username,
+                    password: password
+                })
+            });
+            const data = await resp.json();
 
-    if (!username || !password) {
-      alertBox.text('Username dan password wajib diisi.').removeClass('d-none');
-      return;
-    }
-
-    try {
-      const res = await postToServer({ action: 'login', username, password }, alertBox);
-      if (res && res.success) {
-        // Simpan session di localStorage (bisa dikembangkan pakai JWT/session)
-        localStorage.setItem('isLogin', 'true');
-        localStorage.setItem('username', res.username);
-        localStorage.setItem('nama', res.nama);
-        localStorage.setItem('role', res.role);
-        // Redirect ke dashboard
-        window.location.href = "index.html";
-      } else {
-        alertBox.text(res.message || 'Login gagal.').removeClass('d-none');
-      }
-    } catch (err) {
-      alertBox.text('Terjadi kesalahan jaringan.').removeClass('d-none');
-    }
-  });
+            if (data.success) {
+                // Simpan sesi di localStorage
+                localStorage.setItem('isLogin', 'true');
+                localStorage.setItem('username', data.username);
+                localStorage.setItem('nama', data.nama);
+                localStorage.setItem('role', data.role);
+                // Redirect ke dashboard/menu utama
+                window.location.href = "dashboard_harian.html";
+            } else {
+                alertBox.textContent = data.message || "Login gagal!";
+                alertBox.style.display = 'block';
+            }
+        } catch (err) {
+            alertBox.textContent = "Terjadi error: " + err.message;
+            alertBox.style.display = 'block';
+        }
+        form.querySelector('button[type="submit"]').disabled = false;
+    });
 });
