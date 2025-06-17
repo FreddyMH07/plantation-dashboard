@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('login-form');
     const alertBox = document.getElementById('login-alert');
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbzp1J9xsvkD0EJgYzq9p5B7r0WCXpbDEpYg00gGLE00KsIsM9asuGL9VUkASUdlFiEC/exec'; // Ganti sesuai Web App Script kamu
+    const apiUrl = 'https://script.google.com/macros/s/AKfycbyJMDfaAPZkaqJDcdxniv6jOV6gz6Cb2vTsaogYE9oPjdyQSAHhNSrU0OyjHgckV3CG1Q/exec'; // Ganti sesuai Web App Script kamu
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
