@@ -9,7 +9,12 @@
  * @param {DataTable.Api|null} dailyTable - Instance DataTable sebelumnya (biar bisa destroy).
  * @returns {DataTable.Api} - Instance DataTable terbaru (return supaya bisa dipakai lagi).
  */
+function sumField(arr, key) {
+    return arr.reduce((a, b) => a + (parseFloat(b[key]) || 0), 0);
+}
 
+
+// --- ALERT ---
 export function showAlert(alertBox, message, type = 'info') {
     if (!alertBox || alertBox.length === 0) return;
     alertBox
@@ -26,6 +31,7 @@ export function showAlert(alertBox, message, type = 'info') {
  * @returns {DataTable.Api} - Instance DataTable yang baru.
  */
 
+// --- DASHBOARD HARIAN ---
 export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTable) {
     dashboardContent.empty().hide();
 
@@ -48,7 +54,7 @@ export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTabl
         };
     });
 
- // HTML KPI dan Chart
+  // KPI Box: harian pakai data master harian dan summary harian
     const kpiHtml = `
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="kpi-box"><div class="title">ACV Production</div><div class="value">${data.kpi_acv.value}</div></div>
@@ -62,7 +68,7 @@ export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTabl
             </div></div>
         </div>`;
 
-         const chartHtml = `
+    const chartHtml = `
         <div class="col-lg-12 mb-4">
             <div class="card shadow-sm"><div class="card-body">
                 <h5 class="card-title">Budget Harian vs Realisasi</h5>
@@ -79,11 +85,10 @@ export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTabl
                 </div>
             </div></div>
         </div>`;
-    
+
     dashboardContent.html(kpiHtml + chartHtml + tableHtml).show();
 
-
-     // Render Chart
+// Chart
     try {
         if (data.daily_comparison) {
             const chartData = google.visualization.arrayToDataTable([
@@ -109,7 +114,9 @@ export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTabl
 
 
 
-    // DataTable: inisialisasi ulang
+        // DataTable
+    if ($.fn.DataTable.isDataTable('#daily-data-table')) $('#daily-data-table').DataTable().destroy();
+
     return $('#daily-data-table').DataTable({
         data: tableData,
         columns: [
@@ -149,13 +156,9 @@ export function renderDailyDashboard(data, dashboardContent, alertBox, dailyTabl
             const acvCell = $('td', row).eq(7);
             const acvValue = parseFloat(data.ACV_Prod_Harian);
             if (!isNaN(acvValue)) {
-                if (acvValue >= 100) {
-                    acvCell.addClass('acv-good');
-                } else if (acvValue >= 80) {
-                    acvCell.addClass('acv-warning');
-                } else {
-                    acvCell.addClass('acv-bad');
-                }
+                if (acvValue >= 100)      acvCell.addClass('acv-good');
+                else if (acvValue >= 80)  acvCell.addClass('acv-warning');
+                else                      acvCell.addClass('acv-bad');
             }
         }
     });
@@ -205,18 +208,54 @@ export function renderPivotChart(tableData, groupBy, metric, chartType) {
 }
 
 
-export function renderMonthlyDashboard(data, monthlyTable) {
-    const monthlyDashboardContent = $('#monthly-dashboard-content');
-    monthlyDashboardContent.empty().hide();
+
+
+// --- DASHBOARD BULANAN ---
+export function renderMonthlyDashboard(data, dashboardContent, alertBox, monthlyTable) {
+    dashboardContent.empty().hide();
 
     if (!data || data.isEmpty) {
-        showAlert(data.message || 'Tidak ada data.', 'warning');
+        showAlert(alertBox, data?.message || 'Tidak ada data.', 'warning');
         if (monthlyTable) monthlyTable.clear().draw();
         return;
     }
 
+    // Sum semua yang dibutuhkan
+    const t = data.summary_table || [];
+
+    const totalRefraksiKg   = sumField(t, 'Refraksi_Kg');
+    const totalTonasePanen  = sumField(t, 'Tonase_Panen_Kg');
+    const totalTimbangPKS   = sumField(t, 'Timbang_PKS');
+    const totalTimbangKebun = sumField(t, 'Timbang_Kebun');
+    const totalJJGKirim     = sumField(t, 'JJG_Kirim');
+
+    // Rumus custom sesuai permintaan
+    const refraksiBulanan = totalTonasePanen ? (totalRefraksiKg / totalTonasePanen * 100) : 0;
+    const selisihTonase   = totalTimbangPKS - totalTimbangKebun;
+    const bjrBulanan      = totalJJGKirim ? (totalTonasePanen / totalJJGKirim) : 0;
+
+    let kpiHtml = `
+        <div class="row g-2 mb-3">
+            <div class="col-md-3"><div class="kpi-box"><div class="title">Tonase PKS</div><div class="value">${totalTimbangPKS.toLocaleString('id-ID')} Kg</div></div></div>
+            <div class="col-md-3"><div class="kpi-box"><div class="title">Tonase Kebun</div><div class="value">${totalTimbangKebun.toLocaleString('id-ID')} Kg</div></div></div>
+            <div class="col-md-3"><div class="kpi-box"><div class="title">Selisih Tonase</div><div class="value">${selisihTonase.toLocaleString('id-ID')} Kg</div></div></div>
+            <div class="col-md-3"><div class="kpi-box"><div class="title">BJR Bulanan</div><div class="value">${bjrBulanan.toFixed(2)}</div></div></div>
+            <div class="col-md-3"><div class="kpi-box"><div class="title">Refraksi Bulanan</div><div class="value">${refraksiBulanan.toFixed(2)} %</div></div></div>
+        </div>
+    `;
+
+    const tableHtml = `
+        <div class="col-12">
+            <div class="card shadow-sm"><div class="card-body">
+                <h5 class="card-title fw-bold">Ringkasan Data Bulanan</h5>
+                <div class="table-responsive">
+                    <table id="monthly-data-table" class="table table-striped" style="width:100%"></table>
+                </div>
+            </div></div>
+        </div>
+    `;
     
-    monthlyDashboardContent.html(kpiHtml + chartHtml + tableHtml).show();
+    dashboardContent.html(kpiHtml + '<div id="monthly-chart-div"></div>' + tableHtml).show();
 
     try {
         const chartData = google.visualization.arrayToDataTable([['Metrik', 'Nilai (Kg)'], ['Realisasi PKS', data.realisasi_vs_budget.realisasi], ['Budget Bulanan', data.realisasi_vs_budget.budget]]);
@@ -231,6 +270,47 @@ export function renderMonthlyDashboard(data, monthlyTable) {
         columns: columns, 
         responsive: true, 
         dom: "Bfrtip", 
-        buttons: ['excel', 'pdf', 'print'] 
+        buttons: ['copy','csv','excel','pdf','print',{ extend: 'colvis', text: 'Pilih Kolom' }] 
     });
+}
+
+// --- PIVOT/ANALYTICS ---
+export function renderPivotChart(tableData, groupBy, metric, chartType) {
+    const metricTitle = metric.replace(/_/g, ' ');
+    const groupByTitle = groupBy.replace(/_/g, ' ');
+    const pivotTitle = `Analisis ${metricTitle} per ${groupByTitle}`;
+    
+    try {
+        const aggregatedData = tableData.reduce((acc, row) => {
+            const groupKey = (groupBy === 'Tanggal') ? moment(row[groupBy], "DD MMM YYYY").format("D MMM") : (row[groupBy] || 'Lainnya');
+            const value = parseFloat(row[metric]) || 0;
+            if (!acc[groupKey]) acc[groupKey] = 0;
+            acc[groupKey] += value;
+            return acc;
+        }, {});
+
+        const chartDataArray = [[groupByTitle, metricTitle, { role: 'style' }]];
+        const colors = ['#4285F4', '#DB4437', '#F4B400', '#0F9D58', '#AB47BC', '#00ACC1', '#FF7043', '#9E9D24'];
+        let colorIndex = 0;
+        for (const key in aggregatedData) {
+            chartDataArray.push([key, aggregatedData[key], colors[colorIndex % colors.length]]);
+            colorIndex++;
+        }
+
+        if (chartDataArray.length <= 1) throw new Error("Data tidak cukup untuk diagregasi.");
+
+        const chartData = google.visualization.arrayToDataTable(chartDataArray);
+        let chart;
+        const options = { title: pivotTitle, height: 350, chartArea: { width: '80%', height: '70%' }, legend: { position: 'none' } };
+        const chartContainer = document.getElementById('daily-pivot-chart');
+
+        if (chartType === 'line') chart = new google.visualization.LineChart(chartContainer);
+        else if (chartType === 'pie') chart = new google.visualization.PieChart(chartContainer);
+        else chart = new google.visualization.ColumnChart(chartContainer);
+        
+        chart.draw(chartData, options);
+    } catch (e) {
+        console.error("Gagal membuat pivot chart:", e);
+        $('#daily-pivot-chart').html(`<div class="alert alert-warning">Gagal memuat pivot chart: ${e.message}</div>`);
+    }
 }
